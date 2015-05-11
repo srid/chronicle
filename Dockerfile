@@ -21,7 +21,7 @@ RUN ${CABAL_INSTALL} wai-app-static
 ENV PATH /root/.cabal/bin:$PATH
 
 # Startup scripts for heroku
-RUN mkdir -p /app/.profile.d
+RUN mkdir -p /app/.profile.d /app/bin
 RUN echo "export PATH=\"/app/bin:\$PATH\"" > /app/.profile.d/appbin.sh
 RUN echo "cd /app" >> /app/.profile.d/appbin.sh
 
@@ -32,6 +32,7 @@ EXPOSE 3000
 # ----------
 #
 
+RUN cp /root/.cabal/bin/warp /app/bin/
 # Install dependencis only if the spec files change:
 ADD elm-package.json Makefile /app/src/
 WORKDIR /app/src

@@ -1,2 +1,2 @@
-web: warp
+web: warp -p ${PORT}
 
