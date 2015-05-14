@@ -16,3 +16,9 @@ viewFeeling feeling =
        strong [] [ text feeling.trigger ],
        em [] [ text feeling.notes ]
      ]
+
+
+view : Model.Model -> Html
+view feelings =
+  ul []
+     ( List.map viewFeeling feelings )

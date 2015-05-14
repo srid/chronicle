@@ -1,5 +1,6 @@
 module Model where
 
+
 type alias Model =
   List Feeling
 
