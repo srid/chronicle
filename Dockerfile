@@ -1,24 +1,32 @@
-# This Dockerfile installs both Go and Elm that are required to compile our
-# backend and frontend code. It then proceeds to build the local sources via the
-# ONBUILD instruction.
-
 FROM heroku/cedar:14
+
+ENV CABAL_INSTALL cabal install --disable-documentation -j
+ENV PATH /root/.cabal/bin:$PATH
 
 # Install Haskell and Cabal
 RUN apt-get update && \
     apt-get -y install haskell-platform wget libncurses5-dev && \
     apt-get clean
-RUN cabal update && cabal install cabal-install
+RUN cabal update && ${CABAL_INSTALL} cabal-install
+
+# Install postgrest
+# Using my fork basic auth, --db-uri and static file serving support.
+ENV POSTGREST_REPO "https://github.com/srid/postgrest.git -b heroku "
+RUN git clone ${POSTGREST_REPO} /tmp/postgres
+RUN cd /tmp/postgres && ${CABAL_INSTALL}
+RUN mkdir -p /app/bin
+RUN cp /root/.cabal/bin/* /app/bin/
 
 # Elm 0.15, per http://elm-lang.org/Install.elm
 # Modify this instruction for newer releases.
 ENV ELM_VERSION 0.15
-ENV CABAL_INSTALL cabal install --disable-documentation -j
-RUN ${CABAL_INSTALL} elm-compiler-0.15 elm-package-0.5 elm-make-0.1.2 && \
-    ${CABAL_INSTALL} elm-repl-0.4.1 elm-reactor-0.3.1
-# Static file server
-RUN ${CABAL_INSTALL} wai-app-static
-ENV PATH /root/.cabal/bin:$PATH
+RUN mkdir /tmp/elm \
+  && cd /tmp/elm \
+  && cabal sandbox init \
+  && ${CABAL_INSTALL} elm-compiler-0.15 elm-package-0.5 elm-make-0.1.2 \
+  && ${CABAL_INSTALL} elm-repl-0.4.1 elm-reactor-0.3.1 \
+  && cp .cabal-sandbox/bin/* /app/bin/
+ENV PATH /app/bin:$PATH
 
 # Startup scripts for heroku
 RUN mkdir -p /app/.profile.d /app/bin
@@ -32,12 +40,14 @@ EXPOSE 3000
 # ----------
 #
 
-RUN cp /root/.cabal/bin/warp /app/bin/
-# Install dependencis only if the spec files change:
+# Install dependencies only if the spec files change:
 ADD elm-package.json Makefile /app/src/
 WORKDIR /app/src
 RUN elm package install --yes
 
+
+# TODO: Figure out a way to combine the above (postgrest) with elm reactor for fast development.
+# Perhaps just volume mount and run elm-reactor here.
 
 ONBUILD COPY . /app/src
 ONBUILD RUN elm make src/Main.elm --output=build/index.html
