@@ -4,3 +4,5 @@ elm.js
 # Heroku
 .Dockerfile-*
 .env
+
+build

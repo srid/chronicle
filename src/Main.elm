@@ -1,16 +1,17 @@
 --------------------------
 -- CORE LIBRARY IMPORTS --
 --------------------------
-import Task         exposing (Task, ThreadID, andThen, sequence, succeed, spawn)
+import Task         exposing (Task, ThreadID, andThen, sequence, succeed, spawn, onError)
 import Json.Decode  exposing (Decoder, list, int, string, (:=), map, object2)
 import Signal       exposing (Signal, Mailbox, mailbox, send)
 import List
+import Debug exposing (log)
 
 ---------------------------------
 -- THIRD PARTY LIBRARY IMPORTS --
 ---------------------------------
 import Http             exposing (Error, get)
-import Html             exposing (Html, div, span, ul, li, a, text)
+import Html             exposing (Html, div, span, ul, li, a, em, strong, text)
 import Html.Attributes  exposing (href)
 
 ----------------------
@@ -36,7 +37,7 @@ type alias Feeling =
   , what    : String
   , trigger : String
   , notes   : String
-  , at      : Int
+  , at      : String
   }
 
 type alias Model = List Feeling
@@ -51,8 +52,14 @@ initialModel = []
 viewFeeling : Feeling -> Html
 viewFeeling feeling =
   li []
-     [ span [] [ text feeling.what ],
-       span [] [ text feeling.trigger ]
+     [
+       strong [] [ text feeling.at ],
+       text " ~ ",
+       span [] [ text feeling.how,
+                 text ":",
+                 text feeling.what ],
+       strong [] [ text feeling.trigger ],
+       em [] [ text feeling.notes ]
      ]
 
 view : Model -> Html
@@ -73,17 +80,12 @@ allUrl =
 -- TASKS --
 -----------
 
-getFeelings : Task Error (List Feeling)
+getFeelings : Task Error ()
 getFeelings =
-  get feelingsDecoder allUrl
+  log "Hello" <| get feelingsDecoder allUrl
+    `andThen` \feelings -> log (toString feelings) <| send newFeelingsMailbox.address (Just feelings)
 
-
-getStory : Int -> Task Error ()
-getStory id = get feelingDecoder allUrl
-  `andThen` \story -> send newFeelingMailbox.address (Just story)
-
-
-mainTask : Task Error (List Feeling)
+mainTask : Task Error ()
 mainTask = getFeelings
 
 
@@ -97,7 +99,7 @@ feelingDecoder = Feeling
   `andMap` ("what" := string)
   `andMap` ("trigger"  := string)
   `andMap` ("notes"   := string)
-  `andMap` ("at"  := int)
+  `andMap` ("at"  := string)
 
 feelingsDecoder : Decoder (List Feeling)
 feelingsDecoder = list feelingDecoder
@@ -106,20 +108,19 @@ feelingsDecoder = list feelingDecoder
 -- MAILBOXES --
 ---------------
 
-newFeelingMailbox : Mailbox Action
-newFeelingMailbox =
-  mailbox Nothing
-
-
-mainTaskMailbox : Mailbox (Task Error (List Feeling))
+mainTaskMailbox : Mailbox (Task Error ())
 mainTaskMailbox =
   mailbox mainTask
+
+newFeelingsMailbox : Mailbox (Maybe (List Feeling))
+newFeelingsMailbox =
+  mailbox Nothing
 
 -----------
 -- PORTS --
 -----------
 
-port mainTaskPort : Signal (Task Error (List Feeling))
+port mainTaskPort : Signal (Task Error ())
 port mainTaskPort =
   mainTaskMailbox.signal
 
@@ -128,12 +129,12 @@ port mainTaskPort =
 -- ACTIONS --
 -------------
 
-type alias Action = Maybe Feeling
+type alias Action = Maybe (List Feeling)
 
 
 actions : Signal Action
 actions =
-  newFeelingMailbox.signal
+  newFeelingsMailbox.signal
 
 ------------
 -- UPDATE --
@@ -142,7 +143,7 @@ actions =
 update : Action -> Model -> Model
 update maybeFeeling feelings = case maybeFeeling of
   Nothing -> feelings
-  Just feeling -> feelings ++ [ feeling ]
+  Just newFeelings -> newFeelings
 
 
 ----------
