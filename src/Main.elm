@@ -14,6 +14,9 @@ import Http             exposing (Error, get)
 import Html             exposing (Html, div, span, ul, li, a, em, strong, text)
 import Html.Attributes  exposing (href)
 
+import Model exposing (Model, Feeling)
+import View
+
 ----------------------
 -- HELPER FUNCTIONS --
 ----------------------
@@ -32,15 +35,6 @@ parallel =
 -- MODEL --
 -----------
 
-type alias Feeling =
-  { how     : String
-  , what    : String
-  , trigger : String
-  , notes   : String
-  , at      : String
-  }
-
-type alias Model = List Feeling
 
 initialModel : Model
 initialModel = []
@@ -49,32 +43,23 @@ initialModel = []
 -- VIEW --
 ----------
 
-viewFeeling : Feeling -> Html
-viewFeeling feeling =
-  li []
-     [
-       strong [] [ text feeling.at ],
-       text " ~ ",
-       span [] [ text feeling.how,
-                 text ":",
-                 text feeling.what ],
-       strong [] [ text feeling.trigger ],
-       em [] [ text feeling.notes ]
-     ]
-
 view : Model -> Html
 view feelings =
   ul []
-     ( List.map viewFeeling feelings )
+     ( List.map View.viewFeeling feelings )
 
 
 --------------------------
 -- LINKS TO HACKER NEWS --
 --------------------------
 
+tableName : String
+tableName =
+  "feelings_dev"
+
 allUrl : String
 allUrl =
-  "/feelings_dev"
+  "/" ++ tableName
 
 -----------
 -- TASKS --
