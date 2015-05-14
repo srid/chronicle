@@ -1,0 +1,11 @@
+{
+  "cmd": "make compile",
+  "args": [ ],
+  "sh": true,
+  "cwd": "{PROJECT_PATH}",
+  "env": {
+    "VARIABLE1": "VALUE1",
+    "VARIABLE2": "VALUE2"
+  },
+  "errorMatch": "^Error on line (?<line>\\d+), column (?<col>\\d+)(.*)$"
+}

@@ -1,4 +1,7 @@
-all:
+all:	compile
+	@true
+	
+start:
 	heroku docker:start
 
 release:
