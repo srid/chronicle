@@ -67,7 +67,7 @@ view feelings =
 
 allUrl : String
 allUrl =
-  "https://chronikle-postgrest.herokuapp.com/feelings_dev"
+  "/feelings_dev"
 
 -----------
 -- TASKS --
@@ -100,7 +100,7 @@ feelingDecoder = Feeling
   `andMap` ("at"  := int)
 
 feelingsDecoder : Decoder (List Feeling)
-feelingsDecoder = list feelingDecoder 
+feelingsDecoder = list feelingDecoder
 
 ---------------
 -- MAILBOXES --
