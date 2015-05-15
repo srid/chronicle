@@ -21,20 +21,26 @@ viewFeeling feeling =
   li []
      [
        strong [] [ text feeling.day ],
-       text " ~ ",
-       span [] [ viewFeelingHow feeling.how,
-                 text ":",
-                 text feeling.what ],
-       strong [] [ text feeling.trigger ],
+       text " | ",
+       span [] [ viewFeelingHowOrWhat feeling.how feeling.what ],
+       viewFeelingTrigger feeling.trigger,
        em [] [ text feeling.notes ]
      ]
 
-viewFeelingHow : String -> Html
-viewFeelingHow how =
+viewFeelingHowOrWhat : String -> String -> Html
+viewFeelingHowOrWhat how what =
   let
     elementStyle = style [ ("color", colorForHow how ) ]
+    content      = if what == "" then how else what
   in
-    span [ elementStyle ] [text how]
+    span [ elementStyle ] [text content]
+
+viewFeelingTrigger : String -> Html
+viewFeelingTrigger trigger =
+  if | trigger == "" -> text ""
+     | otherwise     -> span [] [ text " ( <- "
+                                , strong [] [ text trigger ]
+                                , text " ) " ]
 
 colorForHow : String -> String
 colorForHow how =
