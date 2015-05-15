@@ -1,11 +1,15 @@
 module Controller where
 
+import Debug exposing (log)
 import Model exposing (Model)
 
 
-type alias Action = Maybe Model
+type Action
+  = Start
+  | Initialize Model
 
 update : Action -> Model -> Model
-update maybeFeeling feelings = case maybeFeeling of
-  Nothing -> feelings
-  Just newFeelings -> newFeelings
+update action feelings =
+  case action of
+    Start                  -> log "Controller.Start" <| feelings
+    Initialize newFeelings -> newFeelings

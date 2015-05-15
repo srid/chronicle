@@ -5,7 +5,6 @@ import Task         exposing (Task, ThreadID, andThen, sequence, succeed, spawn,
 import Json.Decode  exposing (Decoder, list, int, string, (:=), map, object2)
 import Signal       exposing (Signal, Mailbox, mailbox, send)
 import List
-import Debug exposing (log)
 
 ---------------------------------
 -- THIRD PARTY LIBRARY IMPORTS --
@@ -18,6 +17,7 @@ import Model exposing (Model, Feeling)
 import View
 import Controller
 import Database
+import App
 
 
 
@@ -34,9 +34,11 @@ port mainTaskPort =
   mainTaskMailbox.signal
 
 
+{--
 actions : Signal Controller.Action
 actions =
   .signal Database.feelingsMailbox
+  --}
 
 
 ----------
@@ -44,6 +46,12 @@ actions =
 ----------
 
 main : Signal Html
-main =
-  Signal.map View.view
+main = App.start { model = initialModel
+                 , view = View.view
+                 , update = Controller.update }
+
+{-- omain : Signal Html
+omain =
+  Signal.map (View.view <| .address Database.feelingsMailbox)
     ( Signal.foldp Controller.update initialModel actions )
+    --}
