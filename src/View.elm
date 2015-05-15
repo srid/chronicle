@@ -1,11 +1,12 @@
 module View where
 
+import String exposing (toLower)
 import Signal exposing (Address)
+
 import Model
 import Controller
-import Html.Events exposing (onClick)
-import Html             exposing (Html, h1, h2, div, span, ul, li, a, em, strong,
-                                  button, text)
+import Html exposing (..)
+import Html.Attributes exposing (..)
 
 
 viewFeelingGroup : Model.DayFeelings -> Html
@@ -21,12 +22,28 @@ viewFeeling feeling =
      [
        strong [] [ text feeling.day ],
        text " ~ ",
-       span [] [ text feeling.how,
+       span [] [ viewFeelingHow feeling.how,
                  text ":",
                  text feeling.what ],
        strong [] [ text feeling.trigger ],
        em [] [ text feeling.notes ]
      ]
+
+viewFeelingHow : String -> Html
+viewFeelingHow how =
+  let
+    elementStyle = style [ ("color", colorForHow how ) ]
+  in
+    span [ elementStyle ] [text how]
+
+colorForHow : String -> String
+colorForHow how =
+  case toLower how of
+    "great" -> "green"
+    "good"  -> "blue"
+    "meh"   -> "grey"
+    "bad"   -> "orange"
+    "terrible" -> "red"
 
 
 view : Address Controller.Action -> Model.Model -> Html
