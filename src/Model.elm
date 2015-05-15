@@ -6,6 +6,7 @@ import Date
 import Json.Decode  as J
 import Json.Decode exposing ((:=))
 
+import Search
 import Util exposing (groupBy)
 import Util as U
 
@@ -25,6 +26,20 @@ type alias Feeling =
 
 type How =
   Great | Good | Meh | Bad | Terrible
+
+computeModel : Model -> (List DayFeelings)
+computeModel {feelings, keywords} =
+  groupFeelings <| Search.search keywords feelingToString feelings
+
+feelingToString : Feeling -> String
+feelingToString feeling =
+  String.join " " <| List.map (\f -> f feeling)
+    [ toString << .how
+    , .what
+    , (\_ -> if feeling.trigger == "" then "" else "<-") -- To list all entries with trigger set
+    , .trigger
+    , .notes ]
+
 
 -- JSON decoders
 
@@ -73,29 +88,3 @@ dateToDayString day =
   (toString << Date.month) day ++ ", " ++
   (toString << Date.day) day ++ " (" ++
   (toString << Date.dayOfWeek) day ++ ") "
-
--- Search
-
-search : String -> List Feeling -> List Feeling
-search keywords =
-  let
-    keywordsList = (String.words keywords)
-  in
-    List.filter (\feeling -> List.all (matchFeeling feeling) keywordsList)
-
-matchFeeling : Feeling -> String -> Bool
-matchFeeling feeling keywords =
-  let
-    keywords' = String.toLower keywords
-    text      = String.toLower <| feelingToString feeling
-  in
-    String.contains keywords' text
-
-feelingToString : Feeling -> String
-feelingToString feeling =
-  String.join " " <| List.map (\f -> f feeling)
-    [ toString << .how
-    , .what
-    , (\_ -> if feeling.trigger == "" then "" else "<-") -- To list all entries with trigger set
-    , .trigger
-    , .notes ]
