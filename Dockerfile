@@ -36,20 +36,13 @@ RUN echo "cd /app" >> /app/.profile.d/appbin.sh
 ENV PORT 3000
 EXPOSE 3000
 
-#
-# ----------
-#
 
-# Install dependencies only if the spec files change:
-ADD elm-package.json Makefile /app/src/
+ENV LANG C.UTF-8
 WORKDIR /app/src
-RUN elm package install --yes
 
 
-# TODO: Figure out a way to combine the above (postgrest) with elm reactor for fast development.
-# Perhaps just volume mount and run elm-reactor here.
-
-ONBUILD COPY . /app/src
+ONBUILD ADD . /app/src
+ONBUILD RUN rm -rf elm-stuff && elm package install --yes
 ONBUILD RUN elm make src/Main.elm --output=build/index.html
 # Install everything to /app
 ONBUILD RUN cp -r build/* /app/
