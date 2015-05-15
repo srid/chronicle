@@ -11,7 +11,7 @@ shockingly pleasant. Definititely read [the tutorial][arch] to get started!
 -}
 
 import Html exposing (Html)
-import Signal exposing (Address)
+import Signal exposing (Address, Mailbox)
 
 
 {-| An app has three key components:
@@ -35,6 +35,7 @@ type alias App model action =
     { model : model
     , view : Address action -> model -> Html
     , update : action -> model -> model
+    , actions : Mailbox action
     }
 
 
@@ -66,14 +67,14 @@ start : App model action -> Signal Html
 start app =
   let
     actions =
-      Signal.mailbox Nothing
+      app.actions
 
     address =
-      Signal.forwardTo actions.address Just
+      actions.address
 
     model =
       Signal.foldp
-        (\(Just action) model -> app.update action model)
+        (\action model -> app.update action model)
         app.model
         actions.signal
   in

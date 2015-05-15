@@ -48,7 +48,8 @@ actions =
 main : Signal Html
 main = App.start { model = initialModel
                  , view = View.view
-                 , update = Controller.update }
+                 , update = Controller.update
+                 , actions = Controller.actions }
 
 {-- omain : Signal Html
 omain =

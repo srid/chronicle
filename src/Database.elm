@@ -9,6 +9,7 @@ import Http             exposing (Error, get)
 
 import Util as U
 import Model
+import Controller
 
 tableName : String
 tableName =
@@ -33,7 +34,8 @@ feelingsDecoder = J.list feelingDecoder
 getFeelings : Task Error ()
 getFeelings =
   get feelingsDecoder allUrl
-    `andThen` \feelings -> send feelingsMailbox.address (Just feelings)
+    `andThen` \feelings ->
+      send (.address Controller.actions) <| Controller.Initialize feelings
 
 feelingsMailbox : Mailbox (Maybe Model.Model)
 feelingsMailbox =
