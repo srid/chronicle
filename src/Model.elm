@@ -22,7 +22,8 @@ type alias Feeling =
   , day     : String
   }
 
-type How = Great | Good | Meh | Bad | Terrible
+type How =
+  Great | Good | Meh | Bad | Terrible
 
 -- JSON decoders
 
@@ -78,5 +79,6 @@ feelingToString feeling =
   String.join " " <| List.map (\f -> f feeling)
     [ toString << .how
     , .what
+    , (\f -> if feeling.trigger == "" then "" else "<-") -- To list all entries with trigger set
     , .trigger
     , .notes ]

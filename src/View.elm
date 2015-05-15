@@ -41,7 +41,7 @@ viewFeeling : Model.Feeling -> Html
 viewFeeling feeling =
   li []
      [
-       strong [] [ text feeling.at ],
+       code [] [ text feeling.at ],
        text " | ",
        viewFeelingHowOrWhat feeling.how feeling.what,
        viewFeelingTrigger feeling.trigger,
