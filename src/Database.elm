@@ -26,6 +26,7 @@ feelingDecoder = Model.Feeling
   `U.andMap` ("trigger"  := J.string)
   `U.andMap` ("notes"   := J.string)
   `U.andMap` ("at"  := J.string)
+  `U.andMap` ("day"  := J.string)
 
 feelingsDecoder : J.Decoder Model.Model
 feelingsDecoder = J.list feelingDecoder
