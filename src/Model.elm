@@ -73,10 +73,10 @@ search keywords =
 matchFeeling : String -> Feeling -> Bool
 matchFeeling keywords feeling =
   let
-    keywords' = String.toLower keywords
+    keywords  = String.toLower keywords
     text      = String.toLower <| feelingToString feeling
   in
-    String.contains keywords' text
+    String.contains keywords text
 
 feelingToString : Feeling -> String
 feelingToString feeling =
