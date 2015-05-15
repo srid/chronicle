@@ -2,12 +2,24 @@
 
 This is v2 of [feelings](https://github.com/srid/feelings). Work in progress.
 
+## Tech
+
+* PostgreSQL exposed over the web as a REST API using (see [postgrest](https://github.com/begriffs/postgrest))
+* [Elm](http://elm-lang.org/) for FRP-based frontend.
+
 ## HACKING
 
-Use Heroku Docker CLI plugin for development and deployment.
+Use Heroku Docker CLI plugin for deployment:
 
 ```
-make
+make release
+```
+
+and local build for development:
+
+```
+make run  # run postgrest (TODO: how to get it to build)
+make compile # rebuild Elm sources
 ```
 
 ## Data model
