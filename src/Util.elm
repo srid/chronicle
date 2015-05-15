@@ -8,8 +8,8 @@ andMap = object2 (<|)
 
 
 -- Take a sorted list and group it by some key function
-groupBy : (List a) -> (a -> String) -> (List (String, (List a)))
-groupBy list f =
+groupBy : (a -> String) -> (List a) -> (List (String, (List a)))
+groupBy f list =
   case list of
     []       -> []
     hd::tl   -> let
@@ -17,7 +17,7 @@ groupBy list f =
                   chunk = takeWhile (\x -> (f x) == key) tl
                   rest = dropWhile (\x -> (f x) == key) tl
                 in
-                  (key, hd :: chunk) :: groupBy rest f
+                  (key, hd :: chunk) :: groupBy f rest
 
 takeWhile : (a -> Bool) -> (List a) -> (List a)
 takeWhile predicate list =

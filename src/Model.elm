@@ -23,5 +23,5 @@ initialModel = []
 type alias DayFeelings = (String, (List Feeling))
 
 groupFeelings : (List Feeling) -> (List DayFeelings)
-groupFeelings feelings =
-  groupBy feelings (\feeling -> .day feeling)
+groupFeelings =
+  groupBy .day
