@@ -13,9 +13,9 @@ import Html as H
 
 
 view : Address Controller.Action -> Model.Model -> Html
-view address feelings =
+view address {feelings, keywords} =
   let
-    feelingGroups = Model.groupFeelings feelings
+    feelingGroups = Model.groupFeelings <| Model.search keywords feelings
   in
     div []
     [ h1 [] [ text "Feelings" ]

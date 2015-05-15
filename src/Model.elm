@@ -1,5 +1,7 @@
 module Model where
 
+import List
+import String
 import Json.Decode  as J
 import Json.Decode exposing ((:=))
 
@@ -7,7 +9,9 @@ import Util exposing (groupBy)
 import Util as U
 
 type alias Model =
-  List Feeling
+  { feelings : List Feeling
+  , keywords : String
+  }
 
 type alias Feeling =
   { how     : How
@@ -43,11 +47,11 @@ decodeFeeling = Feeling
   `U.andMap` ("at"  := J.string)
   `U.andMap` ("day"  := J.string)
 
-decodeModel : J.Decoder Model
+decodeModel : J.Decoder (List Feeling)
 decodeModel = J.list decodeFeeling
 
 initialModel : Model
-initialModel = []
+initialModel = { feelings=[], keywords="" }
 
 
 -- Grouping type
@@ -57,3 +61,10 @@ type alias DayFeelings = (String, (List Feeling))
 groupFeelings : (List Feeling) -> (List DayFeelings)
 groupFeelings =
   groupBy .day
+
+
+-- Search
+
+search : String -> List Feeling -> List Feeling
+search keywords =
+  List.filter (\feeling -> String.contains keywords <| String.toLower <| toString feeling.how)
