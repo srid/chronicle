@@ -11,3 +11,6 @@ type alias Feeling =
   , notes   : String
   , at      : String
   }
+
+initialModel : Model
+initialModel = []

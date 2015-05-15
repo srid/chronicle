@@ -1,19 +1,11 @@
---------------------------
--- CORE LIBRARY IMPORTS --
---------------------------
-import Task         exposing (Task, ThreadID, andThen, sequence, succeed, spawn, onError)
-import Json.Decode  exposing (Decoder, list, int, string, (:=), map, object2)
-import Signal       exposing (Signal, Mailbox, mailbox, send)
+import Task         exposing (Task)
+import Signal       exposing (Signal, mailbox)
 import List
 
----------------------------------
--- THIRD PARTY LIBRARY IMPORTS --
----------------------------------
-import Html             exposing (Html, div, span, ul, li, a, em, strong, text)
-import Html.Attributes  exposing (href)
-import Http             exposing (Error, get)
+import Http
+import Html exposing (Html)
 
-import Model exposing (Model, Feeling)
+import Model
 import View
 import Controller
 import Database
@@ -21,38 +13,12 @@ import App
 
 
 
-initialModel : Model
-initialModel = []
-
-
-mainTaskMailbox : Mailbox (Task Error ())
-mainTaskMailbox =
-  mailbox Database.getFeelings
-
-port mainTaskPort : Signal (Task Error ())
+port mainTaskPort : Signal (Task Http.Error ())
 port mainTaskPort =
-  mainTaskMailbox.signal
-
-
-{--
-actions : Signal Controller.Action
-actions =
-  .signal Database.feelingsMailbox
-  --}
-
-
-----------
--- MAIN --
-----------
+  .signal <| mailbox Database.getFeelings
 
 main : Signal Html
-main = App.start { model = initialModel
+main = App.start { model = Model.initialModel
                  , view = View.view
                  , update = Controller.update
                  , actions = Controller.actions }
-
-{-- omain : Signal Html
-omain =
-  Signal.map (View.view <| .address Database.feelingsMailbox)
-    ( Signal.foldp Controller.update initialModel actions )
-    --}

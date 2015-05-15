@@ -36,7 +36,3 @@ getFeelings =
   get feelingsDecoder allUrl
     `andThen` \feelings ->
       send (.address Controller.actions) <| Controller.Initialize feelings
-
-feelingsMailbox : Mailbox (Maybe Model.Model)
-feelingsMailbox =
-  mailbox Nothing

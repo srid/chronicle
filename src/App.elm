@@ -1,3 +1,5 @@
+{-- From https://github.com/evancz/start-app --}
+
 module App where
 {-| This module makes it super simple to get started making a typical web-app.
 It is designed to work perfectly with [the Elm Architecture][arch] which
