@@ -11,7 +11,9 @@ import Controller
 import Database
 import App
 
-
+port title : String
+port title =
+  "Chronicle"
 
 port mainTaskPort : Signal (Task Http.Error ())
 port mainTaskPort =

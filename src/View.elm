@@ -18,7 +18,7 @@ view address {feelings, keywords} =
     feelingGroups = Model.groupFeelings <| Model.search keywords feelings
   in
     div []
-    [ h1 [] [ text "Feelings" ]
+    [ h1 [] [ text "Chronicle : Feelings" ]
     , viewSearchInput address
     , div [] (List.map viewFeelingGroup feelingGroups)
     ]
