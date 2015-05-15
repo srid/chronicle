@@ -26,7 +26,7 @@ view address {feelings, keywords} =
 viewSearchInput : Address Controller.Action -> Html
 viewSearchInput address =
   input [ placeholder "Search text"
-        , HE.on "input" HE.targetValue <| (message address << Controller.Search)
+        , HE.on "input" HE.targetValue (message address << Controller.Search)
         ] []
 
 viewFeelingGroup : Model.DayFeelings -> Html

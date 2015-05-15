@@ -29,24 +29,24 @@ type How =
 
 decodeHow : J.Decoder How
 decodeHow =
-  let f s = case s of
-    "great"  -> Ok Great
-    "good"  -> Ok Good
-    "meh"  -> Ok Meh
-    "bad"  -> Ok Bad
+  let parseHow s = case s of
+    "great"     -> Ok Great
+    "good"      -> Ok Good
+    "meh"       -> Ok Meh
+    "bad"       -> Ok Bad
     "terrible"  -> Ok Terrible
-    otherwise -> Err "Invalid `how` field"
+    otherwise   -> Err "Invalid `how` field"
   in
-    J.customDecoder J.string f
+    J.customDecoder J.string parseHow
 
 decodeFeeling : J.Decoder Feeling
 decodeFeeling = Feeling
-  `J.map`    ("how"    := decodeHow)
-  `U.andMap` ("what" := J.string)
+  `J.map`    ("how"      := decodeHow)
+  `U.andMap` ("what"     := J.string)
   `U.andMap` ("trigger"  := J.string)
-  `U.andMap` ("notes"   := J.string)
-  `U.andMap` ("at"  := J.string)
-  `U.andMap` ("day"  := J.string)
+  `U.andMap` ("notes"    := J.string)
+  `U.andMap` ("at"       := J.string)
+  `U.andMap` ("day"      := J.string)
 
 decodeModel : J.Decoder (List Feeling)
 decodeModel = J.list decodeFeeling
@@ -72,13 +72,17 @@ search keywords =
 
 matchFeeling : String -> Feeling -> Bool
 matchFeeling keywords feeling =
-  String.contains (String.toLower keywords) (String.toLower <| feelingToString feeling)
+  let
+    keywords' = String.toLower keywords
+    text      = String.toLower <| feelingToString feeling
+  in
+    String.contains keywords' text
 
 feelingToString : Feeling -> String
 feelingToString feeling =
   String.join " " <| List.map (\f -> f feeling)
     [ toString << .how
     , .what
-    , (\f -> if feeling.trigger == "" then "" else "<-") -- To list all entries with trigger set
+    , (\_ -> if feeling.trigger == "" then "" else "<-") -- To list all entries with trigger set
     , .trigger
     , .notes ]
