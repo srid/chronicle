@@ -21,18 +21,19 @@ viewFeeling : Model.Feeling -> Html
 viewFeeling feeling =
   li []
      [
-       strong [] [ text feeling.day ],
+       strong [] [ text feeling.at ],
        text " | ",
        span [] [ viewFeelingHowOrWhat feeling.how feeling.what ],
        viewFeelingTrigger feeling.trigger,
        Markdown.toHtml feeling.notes
      ]
 
-viewFeelingHowOrWhat : String -> String -> Html
+viewFeelingHowOrWhat : Model.How -> String -> Html
 viewFeelingHowOrWhat how what =
   let
+    howString    = toLower <| toString how
     elementStyle = style [ ("color", colorForHow how ) ]
-    content      = if what == "" then how else what
+    content      = if what == "" then howString else what
   in
     span [ elementStyle ] [text content]
 
@@ -43,14 +44,14 @@ viewFeelingTrigger trigger =
                                 , strong [] [ text trigger ]
                                 , text " ) " ]
 
-colorForHow : String -> String
+colorForHow : Model.How -> String
 colorForHow how =
-  case toLower how of
-    "great" -> "green"
-    "good"  -> "blue"
-    "meh"   -> "grey"
-    "bad"   -> "orange"
-    "terrible" -> "red"
+  case how of
+    Model.Great -> "green"
+    Model.Good  -> "blue"
+    Model.Meh   -> "grey"
+    Model.Bad   -> "orange"
+    Model.Terrible -> "red"
 
 
 view : Address Controller.Action -> Model.Model -> Html

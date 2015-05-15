@@ -20,9 +20,21 @@ allUrl : String
 allUrl =
   "/" ++ tableName
 
+howDecoder : J.Decoder Model.How
+howDecoder =
+  let f s = case s of
+    "great"  -> Ok Model.Great
+    "good"  -> Ok Model.Good
+    "meh"  -> Ok Model.Meh
+    "bad"  -> Ok Model.Bad
+    "terrible"  -> Ok Model.Terrible
+    otherwise -> Err "Invalid `how` field" 
+  in
+    J.customDecoder J.string f
+
 feelingDecoder : J.Decoder Model.Feeling
 feelingDecoder = Model.Feeling
-  `J.map`    ("how"    := J.string)
+  `J.map`    ("how"    := howDecoder)
   `U.andMap` ("what" := J.string)
   `U.andMap` ("trigger"  := J.string)
   `U.andMap` ("notes"   := J.string)

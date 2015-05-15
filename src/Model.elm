@@ -6,13 +6,15 @@ type alias Model =
   List Feeling
 
 type alias Feeling =
-  { how     : String
+  { how     : How
   , what    : String
   , trigger : String
   , notes   : String
   , at      : String
   , day     : String
   }
+
+type How = Great | Good | Meh | Bad | Terrible
 
 initialModel : Model
 initialModel = []
