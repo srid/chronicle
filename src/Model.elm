@@ -67,4 +67,16 @@ groupFeelings =
 
 search : String -> List Feeling -> List Feeling
 search keywords =
-  List.filter (\feeling -> String.contains keywords <| String.toLower <| toString feeling.how)
+  List.filter (matchFeeling keywords)
+
+matchFeeling : String -> Feeling -> Bool
+matchFeeling keywords feeling =
+  String.contains (String.toLower keywords) (String.toLower <| feelingToString feeling)
+
+feelingToString : Feeling -> String
+feelingToString feeling =
+  String.join " " <| List.map (\f -> f feeling)
+    [ toString << .how
+    , .what
+    , .trigger
+    , .notes ]
