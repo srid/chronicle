@@ -78,10 +78,13 @@ dateToDayString day =
 
 search : String -> List Feeling -> List Feeling
 search keywords =
-  List.filter (matchFeeling keywords)
+  let
+    keywordsList = (String.words keywords)
+  in
+    List.filter (\feeling -> List.all (matchFeeling feeling) keywordsList)
 
-matchFeeling : String -> Feeling -> Bool
-matchFeeling keywords feeling =
+matchFeeling : Feeling -> String -> Bool
+matchFeeling feeling keywords =
   let
     keywords' = String.toLower keywords
     text      = String.toLower <| feelingToString feeling
