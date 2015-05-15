@@ -2,6 +2,7 @@ module View where
 
 import String exposing (toLower)
 import Signal exposing (Address)
+import Markdown
 
 import Model
 import Controller
@@ -24,7 +25,7 @@ viewFeeling feeling =
        text " | ",
        span [] [ viewFeelingHowOrWhat feeling.how feeling.what ],
        viewFeelingTrigger feeling.trigger,
-       em [] [ text feeling.notes ]
+       Markdown.toHtml feeling.notes
      ]
 
 viewFeelingHowOrWhat : String -> String -> Html
