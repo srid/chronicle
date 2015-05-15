@@ -31,6 +31,7 @@ feelingsDecoder : J.Decoder Model.Model
 feelingsDecoder = J.list feelingDecoder
 
 
+-- XXX: must handle error case from `get` using Result x a
 getFeelings : Task Error ()
 getFeelings =
   get feelingsDecoder allUrl

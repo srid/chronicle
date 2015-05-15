@@ -26,7 +26,7 @@ view : Address Controller.Action -> Model.Model -> Html
 view address feelings =
   div []
   [ h1 [] [ text "Feelings" ],
-    button [ onClick address Controller.Start ] [ text "Start" ],
+    button [ onClick address Controller.NoOp ] [ text "Start" ],
     ul []
       ( List.map viewFeeling feelings )
   ]

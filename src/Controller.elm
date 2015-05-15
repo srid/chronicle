@@ -7,15 +7,15 @@ import Model exposing (Model)
 
 
 type Action
-  = Start
+  = NoOp
   | Initialize Model
 
 update : Action -> Model -> Model
 update action feelings =
   case action of
-    Start                  -> log "Controller.Start" <| feelings
+    NoOp                   -> log "Controller.NoOp" <| feelings
     Initialize newFeelings -> newFeelings
 
 actions : Mailbox Action
 actions =
-  mailbox Start
+  mailbox NoOp
