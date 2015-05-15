@@ -11,9 +11,10 @@ import Util as U
 import Model
 import Controller
 
+-- Using production table
 tableName : String
 tableName =
-  "feelings_dev"
+  "feelings"
 
 allUrl : String
 allUrl =
