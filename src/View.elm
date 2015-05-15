@@ -2,6 +2,7 @@ module View where
 
 import String exposing (toLower)
 import Signal exposing (Address, message)
+import Date
 import Markdown
 
 import Model
@@ -41,12 +42,24 @@ viewFeeling : Model.Feeling -> Html
 viewFeeling feeling =
   li []
      [
-       code [] [ text feeling.at ],
+       viewFeelingAt feeling.at,
        text " | ",
        viewFeelingHowOrWhat feeling.how feeling.what,
        viewFeelingTrigger feeling.trigger,
        Markdown.toHtml feeling.notes
      ]
+
+-- TODO: Write a general date formatter elm package.
+viewFeelingAt : Date.Date -> Html
+viewFeelingAt at =
+  code [] [ text <| toString <| Date.month at
+          , text <| toString <| Date.day at
+          , text <| toString <| Date.dayOfWeek at
+          , text " "
+          , text <| toString <| Date.hour at
+          , text ":"
+          , text <| toString <| Date.minute at
+          ]
 
 viewFeelingHowOrWhat : Model.How -> String -> Html
 viewFeelingHowOrWhat how what =

@@ -8,7 +8,7 @@ andMap = object2 (<|)
 
 
 -- Take a sorted list and group it by some key function
-groupBy : (a -> String) -> (List a) -> (List (String, (List a)))
+groupBy : (a -> b) -> (List a) -> (List (b, (List a)))
 groupBy f list =
   case list of
     []       -> []

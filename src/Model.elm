@@ -2,6 +2,7 @@ module Model where
 
 import List
 import String
+import Date
 import Json.Decode  as J
 import Json.Decode exposing ((:=))
 
@@ -18,8 +19,8 @@ type alias Feeling =
   , what    : String
   , trigger : String
   , notes   : String
-  , at      : String  -- XXX: must fix date time type
-  , day     : String
+  , at      : Date.Date
+  , day     : Date.Date
   }
 
 type How =
@@ -45,8 +46,11 @@ decodeFeeling = Feeling
   `U.andMap` ("what"     := J.string)
   `U.andMap` ("trigger"  := J.string)
   `U.andMap` ("notes"    := J.string)
-  `U.andMap` ("at"       := J.string)
-  `U.andMap` ("day"      := J.string)
+  `U.andMap` ("at"       := decodeDate)
+  `U.andMap` ("day"      := decodeDate)
+
+decodeDate : J.Decoder (Date.Date)
+decodeDate = J.customDecoder J.string Date.fromString
 
 decodeModel : J.Decoder (List Feeling)
 decodeModel = J.list decodeFeeling
@@ -61,8 +65,14 @@ type alias DayFeelings = (String, (List Feeling))
 
 groupFeelings : (List Feeling) -> (List DayFeelings)
 groupFeelings =
-  groupBy .day
+  groupBy (dateToDayString << .day)
 
+dateToDayString : Date.Date -> String
+dateToDayString day =
+  (toString << Date.year) day ++ " " ++
+  (toString << Date.month) day ++ ", " ++
+  (toString << Date.day) day ++ " (" ++
+  (toString << Date.dayOfWeek) day ++ ") "
 
 -- Search
 
