@@ -2,6 +2,8 @@ module Search where
 
 import String
 
+-- Search complexity is O(n), assuming small number of keywords.
+-- Eventually we have to let postgresql handle the searching.
 search : String -> (a -> String) -> List a -> List a
 search keywords valueToString =
   let
