@@ -62,7 +62,7 @@ howMode feelings =
     groups      = U.groupBy .how <| List.sortBy (.how >> toString) feelings
     frequencies = List.map (\(how, fl) -> (how, List.length fl)) groups
   in
-    case List.head <| List.sortBy snd frequencies of
+    case List.head <| List.reverse <| List.sortBy snd frequencies of
       Nothing       -> Meh
       Just (how, _) -> how
 
