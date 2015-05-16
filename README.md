@@ -29,13 +29,17 @@ Basic idea is to keep track of a **tree of memories**. Accumulation of data occu
 
 All level of summarizations are ultimately linked to the specific moments (thus forming a tree) that can be consulted at any time. We thus create "memories" that are formed at individual moments without the bias of faulty recall.
 
-Each entries can have metadata for later use. A special "notes" metadata key holds Markdown formatted notes (the memory 'content').
+Each entries can have metadata for later use. All entries have common fields like "created_at" (creation time), "notes" (markdown formatted notes, the memory 'content'). Use PostgreSQL JSON type for the arbitrary metadata so we don't have to keep changing the database schema (metadata changes is to be expected in future).
 
 All entries belong to a "channel". A channel has a recommended set of metadata. The following channels are currently known:
 
 * Channel "feeling", with metadata: how, what, trigger.
-* Channel "work/<company>", with metadata: project, people, ...
+* Channel "work/<company>", with metadata: project, people, hindrance, ...
 * Channel "travel/india-trip-2015", with metadata: location, people, ...
+
+### Challenges
+
+* How to represent such a flexible data model (above) without writing specific model/view code in Elm? We currently do this for the 'feelings' data model. Perhaps, just separate the channel spec as directories (`src/Elm/Channels/{Base,Feeling,Work}.elm`) for now, with a 'Base' channel that can be inherited for new channels.
 
 ### User Interface
 
@@ -48,14 +52,6 @@ Use `\d+ 1.feelings` to inspect the view.
 Use `ALTER ROLE <username> SET timezone = 'America/Vancouver';` to set database timezone. This however doesn't automatically change the day end marker from 12am to something custom (like 3am).
 
 TODO: dump schema into git repo.
-
-### Data model
-
-Generalize "feeling" into "events". Feelings are just one kind of events. Tracking work progress log, including challenges and achievements, is another example. Events have metadata represented using [PostgreSQL JSON types](https://blog.heroku.com/archives/2012/12/6/postgres_92_now_available#json-support).
-
-* **Feeling kind** may require these metadata: *type* (good, bad, neutral), *label* (what is the feeling?), *trigger*.
-
-* **WorkLog kind** may require: *type* (accomplished, hindrance, misc), *project* (associated project), *desc*
 
 
 ## Elm package ideas
