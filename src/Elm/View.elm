@@ -58,9 +58,7 @@ viewFeeling feeling =
 -- TODO: Write a general date formatter elm package.
 viewFeelingAt : Date.Date -> Html
 viewFeelingAt at =
-  code [] [ text <| toString <| Date.month at
-          , text <| toString <| Date.day at
-          , text <| toString <| Date.dayOfWeek at
+  code [] [ text <| toString <| Date.dayOfWeek at
           , text " "
           , text <| toString <| Date.hour at
           , text ":"

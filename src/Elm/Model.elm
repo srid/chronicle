@@ -21,7 +21,6 @@ type alias Feeling =
   , trigger : String
   , notes   : String
   , at      : Date.Date
-  , day     : Date.Date
   }
 
 type How =
@@ -39,6 +38,22 @@ feelingToString feeling =
     , (\_ -> if feeling.trigger == "" then "" else "<-") -- To list all entries with trigger set
     , .trigger
     , .notes ]
+
+dayOf : Feeling -> String
+dayOf feeling =
+  let
+    at = feeling.at
+  in
+    String.join ""
+    [ {-- Date.year at  |> toString   <- Need to uncomment in 2016 :-P
+    , ", "
+    , --} Date.month at |> toString
+    , " "
+    , Date.day at   |> toString
+    , " ("
+    , Date.dayOfWeek at |> toString
+    , ") "
+    ]
 
 -- Compute the statistical mode of 'how' in feelings
 howMode : (List Feeling) -> How
@@ -72,7 +87,6 @@ decodeFeeling = Feeling
   `U.andMap` ("trigger"  := J.string)
   `U.andMap` ("notes"    := J.string)
   `U.andMap` ("at"       := decodeDate)
-  `U.andMap` ("day"      := decodeDate)
 
 decodeDate : J.Decoder (Date.Date)
 decodeDate = J.customDecoder J.string Date.fromString
@@ -90,11 +104,4 @@ type alias DayFeelings = (String, (List Feeling))
 
 groupFeelings : (List Feeling) -> (List DayFeelings)
 groupFeelings =
-  groupBy (dateToDayString << .day)
-
-dateToDayString : Date.Date -> String
-dateToDayString day =
-  (toString << Date.year) day ++ " " ++
-  (toString << Date.month) day ++ ", " ++
-  (toString << Date.day) day ++ " (" ++
-  (toString << Date.dayOfWeek) day ++ ") "
+  groupBy dayOf
