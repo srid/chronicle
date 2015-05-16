@@ -33,14 +33,16 @@ viewSearchInput address =
 viewFeelingGroup : Model.DayFeelings -> Html
 viewFeelingGroup (day, feelings) =
   let
+    -- FIXME: howMode and badge must be calculated against unfiltered list
+    --        of feelings on this day.
+    howMode = Model.howMode feelings |> bootstrapContextForHow 
+    badge   = List.length feelings |> toString
     header  = div []
               [ text day
-              , span [ class "badge" ]
-                [ text <| toString <| List.length feelings ]
+              , span [ class "badge" ] [ text badge ]
               ]
     content = ul [ class "list-group" ]
               (List.map viewFeeling feelings)
-    howMode = bootstrapContextForHow <| Model.howMode feelings
   in
     B.panel' howMode header content
 
