@@ -32,3 +32,8 @@ panel' ctx' title content =
   [ div [ class "panel-heading" ] [ title ]
   , div [ class "panel-body" ] [ content ]
   ]
+
+label : Maybe Context -> String -> Html
+label ctx string =
+  span [ class ("label label-" ++ contextClassSuffix ctx) ]
+  [ text string ]

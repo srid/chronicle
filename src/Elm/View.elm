@@ -35,7 +35,7 @@ viewFeelingGroup (day, feelings) =
   let
     -- FIXME: howMode and badge must be calculated against unfiltered list
     --        of feelings on this day.
-    howMode = Model.howMode feelings |> bootstrapContextForHow 
+    howMode = Model.howMode feelings |> bootstrapContextForHow
     badge   = List.length feelings |> toString
     header  = div []
               [ text day
@@ -71,10 +71,9 @@ viewFeelingHowOrWhat : Model.How -> String -> Html
 viewFeelingHowOrWhat how what =
   let
     howString    = toLower <| toString how
-    elementStyle = style [ ("color", colorForHow how ) ]
     content      = if what == "" then howString else what
   in
-    span [ elementStyle ] [text content]
+    B.label (bootstrapContextForHow how) content
 
 viewFeelingTrigger : String -> Html
 viewFeelingTrigger trigger =
@@ -82,15 +81,6 @@ viewFeelingTrigger trigger =
      | otherwise     -> span [] [ text " ( <- "
                                 , strong [] [ text trigger ]
                                 , text " ) " ]
-
-colorForHow : Model.How -> String
-colorForHow how =
-  case how of
-    Model.Great -> "green"
-    Model.Good  -> "blue"
-    Model.Meh   -> "grey"
-    Model.Bad   -> "orange"
-    Model.Terrible -> "red"
 
 bootstrapContextForHow : Model.How -> Maybe B.Context
 bootstrapContextForHow how =
