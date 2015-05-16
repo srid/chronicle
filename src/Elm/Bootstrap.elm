@@ -37,3 +37,13 @@ label : Maybe Context -> String -> Html
 label ctx string =
   span [ class ("label label-" ++ contextClassSuffix ctx) ]
   [ text string ]
+
+pageHeader : String -> Html
+pageHeader title =
+  div [ class "page-header" ]
+    [ h1 [] [ text title ]
+    ]
+
+fluidContainer : List Html -> Html
+fluidContainer children =
+  div [ class "container-fluid" ] children

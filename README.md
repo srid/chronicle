@@ -6,6 +6,7 @@ This is v2 of [feelings](https://github.com/srid/feelings). Work in progress.
 
 * PostgreSQL exposed over the web as a REST API (see [postgrest](https://github.com/begriffs/postgrest))
 * [Elm](http://elm-lang.org/) for FRP-based frontend.
+* [Bootstrap](http://getbootstrap.com/) HTML/CSS framework
 
 ## HACKING
 

@@ -18,17 +18,39 @@ view address model =
   let
     feelingGroups = Model.computeModel model
   in
-    div []
-    [ h1 [] [ text "Chronicle : Feelings" ]
-    , viewSearchInput address
+    B.fluidContainer
+    [ B.pageHeader "Chronicle : Feelings"
+    , viewInput address
     , div [] (List.map viewFeelingGroup feelingGroups)
     ]
+
+
+viewInput : Address Controller.Action -> Html
+viewInput address =
+  let
+    header  = text "Manage"
+    content = div []
+                [ viewSearchInput address
+                , viewAddFeelingForm address
+                ]
+  in
+    B.panel' (Just B.Primary) header content
 
 viewSearchInput : Address Controller.Action -> Html
 viewSearchInput address =
   input [ placeholder "Search text"
         , HE.on "input" HE.targetValue (message address << Controller.Search)
         ] []
+
+
+viewAddFeelingForm : Address Controller.Action -> Html
+viewAddFeelingForm address =
+  div [ ]
+  [ input [ name "what", placeholder "What am I feeling?" ] []
+  -- TODO: how to pass value of "what" input above, to the address here?
+  , button [ HE.onClick address <| Controller.Add "TODO" ] [ text "TODO" ]
+  ]
+
 
 viewFeelingGroup : Model.DayFeelings -> Html
 viewFeelingGroup (day, feelings) =
