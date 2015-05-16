@@ -47,12 +47,13 @@ dayOf feeling =
     String.join ""
     [ {-- Date.year at  |> toString   <- Need to uncomment in 2016 :-P
     , ", "
-    , --} Date.month at |> toString
+    , --}
+      Date.dayOfWeek at |> toString
+    , ", "
+    , Date.month at |> toString
     , " "
     , Date.day at   |> toString
-    , " ("
-    , Date.dayOfWeek at |> toString
-    , ") "
+    , " "
     ]
 
 -- Compute the statistical mode of 'how' in feelings

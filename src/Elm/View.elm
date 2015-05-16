@@ -49,23 +49,24 @@ viewFeelingGroup (day, feelings) =
 viewFeeling :  Model.Feeling -> Html
 viewFeeling feeling =
   li [ class "list-group-item list-group-item-" ]
-     [
-       viewFeelingAt feeling.at,
-       text " | ",
-       viewFeelingHowOrWhat feeling.how feeling.what,
-       viewFeelingTrigger feeling.trigger,
-       Markdown.toHtml feeling.notes
+     [ viewFeelingAt feeling.at
+     , text " "
+     , viewFeelingHowOrWhat feeling.how feeling.what
+     , viewFeelingTrigger feeling.trigger
+     , Markdown.toHtml feeling.notes
      ]
 
 -- TODO: Write a general date formatter elm package.
 viewFeelingAt : Date.Date -> Html
 viewFeelingAt at =
-  code [] [ text <| toString <| Date.dayOfWeek at
-          , text " "
-          , text <| toString <| Date.hour at
-          , text ":"
-          , text <| toString <| Date.minute at
-          ]
+  let
+    dateIntToString = toString >> String.pad 2 '0'
+  in
+    code [ (title (Date.dayOfWeek at |> toString)) ]
+    [ text <| dateIntToString <| Date.hour at
+    , text ":"
+    , text <| dateIntToString <| Date.minute at
+    ]
 
 viewFeelingHowOrWhat : Model.How -> String -> Html
 viewFeelingHowOrWhat how what =
