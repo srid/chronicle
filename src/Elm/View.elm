@@ -55,9 +55,9 @@ viewAddFeelingForm address =
 viewFeelingGroup : Model.DayFeelings -> Html
 viewFeelingGroup (day, feelings) =
   let
-    -- FIXME: howMode and badge must be calculated against unfiltered list
+    -- FIXME: dayHow and badge must be calculated against unfiltered list
     --        of feelings on this day.
-    howMode = Model.howMode feelings |> bootstrapContextForHow
+    dayHow  = Model.howAggregate feelings |> bootstrapContextForHow
     badge   = List.length feelings |> toString
     header  = div []
               [ text day
@@ -66,7 +66,7 @@ viewFeelingGroup (day, feelings) =
     content = ul [ class "list-group" ]
               (List.map viewFeeling feelings)
   in
-    B.panel' howMode header content
+    B.panel' dayHow header content
 
 viewFeeling :  Model.Feeling -> Html
 viewFeeling feeling =

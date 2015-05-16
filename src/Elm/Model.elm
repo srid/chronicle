@@ -1,6 +1,7 @@
 module Model where
 
 import List
+import Set
 import String
 import Date
 import Json.Decode  as J
@@ -25,6 +26,13 @@ type alias Feeling =
 
 type How =
   Great | Good | Meh | Bad | Terrible
+
+isFelicitous : How -> Bool
+isFelicitous how =
+  case how of
+    Great       -> True
+    Good        -> True
+    otherwise   -> False
 
 computeModel : Model -> (List DayFeelings)
 computeModel {feelings, keywords} =
@@ -55,17 +63,6 @@ dayOf feeling =
     , Date.day at   |> toString
     , " "
     ]
-
--- Compute the statistical mode of 'how' in feelings
-howMode : (List Feeling) -> How
-howMode feelings =
-  let
-    groups      = U.groupBy .how <| List.sortBy (.how >> toString) feelings
-    frequencies = List.map (\(how, fl) -> (how, List.length fl)) groups
-  in
-    case List.head <| List.reverse <| List.sortBy snd frequencies of
-      Nothing       -> Meh
-      Just (how, _) -> how
 
 -- JSON decoders
 
@@ -106,3 +103,20 @@ type alias DayFeelings = (String, (List Feeling))
 groupFeelings : (List Feeling) -> (List DayFeelings)
 groupFeelings =
   groupBy dayOf
+
+-- Compute overall 'how' of a set of feelings
+howAggregate : (List Feeling) -> How
+howAggregate feelings =
+  let
+    howSet = Set.fromList <| List.map (toString << .how) feelings
+    goodCount = feelings |> List.map .how |> List.filter isFelicitous |> List.length
+    worserCount = feelings |> List.map .how |> List.filter (not << isFelicitous) |> List.length
+  in
+    -- If there is even at least one Great entry, mark overall day as great, for future recall purposes.
+    -- Do the same for Terrible entry.
+    -- If 'Good' exceeds the number of Meh,Bad,Terrible, mark it as Good
+    if | Set.member (toString Great) howSet     -> Great
+       | Set.member (toString Terrible) howSet  -> Terrible
+       | goodCount > worserCount                -> Good
+       | Set.member (toString Bad) howSet       -> Bad
+       | otherwise                              -> Meh
