@@ -33,7 +33,9 @@ viewSearchInput address =
 viewFeelingGroup : Model.DayFeelings -> Html
 viewFeelingGroup (day, feelings) =
   div []
-  [ h2 [] [text day]
+  [ div [ class "feeling-group" ] [ text day
+          , span [ class "badge" ] [ text <| toString <| List.length feelings ]
+          ]
   , ul [] (List.map viewFeeling feelings)
   ]
 

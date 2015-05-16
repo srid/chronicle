@@ -11,6 +11,7 @@ release:
 compile:
 	elm make src/Elm/Main.elm --output=build/static/elm.js
 	cp src/Html/index.html build/static/index.html
+	cp src/Css/style.css build/static/style.css
 
 run:	compile
 	cd build && ../../postgrest/dist/build/postgrest/postgrest -p 3000 -D ${DATABASE_URL}

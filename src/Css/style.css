@@ -1,0 +1,11 @@
+body {
+  padding-left: 0.7em;
+}
+
+/* Heading */
+.feeling-group {
+  font-weight: bold;
+  font-size: 150%;
+  padding-top: 1em;
+  padding-bottom: 0.5em;
+}

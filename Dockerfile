@@ -42,8 +42,8 @@ WORKDIR /app/src
 
 
 ONBUILD ADD . /app/src
-ONBUILD RUN rm -rf elm-stuff && elm package install --yes
-ONBUILD RUN elm make src/Elm/Main.elm --output=build/index.html
+ONBUILD RUN rm -rf elm-stuff build && elm package install --yes
+ONBUILD RUN make compile
 # Install everything to /app
 ONBUILD RUN cp -r build/* /app/
 ONBUILD WORKDIR /app
