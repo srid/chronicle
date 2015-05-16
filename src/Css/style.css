@@ -3,9 +3,6 @@ body {
 }
 
 /* Heading */
-.feeling-group {
+.panel-heading {
   font-weight: bold;
-  font-size: 150%;
-  padding-top: 1em;
-  padding-bottom: 0.5em;
 }

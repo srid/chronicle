@@ -40,6 +40,16 @@ feelingToString feeling =
     , .trigger
     , .notes ]
 
+-- Compute the statistical mode of 'how' in feelings
+howMode : (List Feeling) -> How
+howMode feelings =
+  let
+    groups      = U.groupBy .how <| List.sortBy (.how >> toString) feelings
+    frequencies = List.map (\(how, fl) -> (how, List.length fl)) groups
+  in
+    case List.head <| List.sortBy snd frequencies of
+      Nothing       -> Meh
+      Just (how, _) -> how
 
 -- JSON decoders
 

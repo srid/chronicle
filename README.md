@@ -46,3 +46,4 @@ Some new packages I can create by extracing code from this repo:
 * Date formatter
 * Time ago (eg.: `23 secs ago`)
 * Search query parser (see `src/Search.elm`)
+* Bootstrap.elm (maybe [use this](https://github.com/circuithub/elm-bootstrap-html)?)
