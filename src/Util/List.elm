@@ -1,11 +1,4 @@
-module Util where
-
-import Json.Decode  exposing (Decoder, object2)
-
--- Convenient for decoding large JSON objects
-andMap : Decoder (a -> b) -> Decoder a -> Decoder b
-andMap = object2 (<|)
-
+module Util.List where
 
 -- Take a sorted list and group it by some key function
 groupBy : (a -> b) -> (List a) -> (List (b, (List a)))

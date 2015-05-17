@@ -1,14 +1,14 @@
-module Controller where
+module Chronicle.Controller where
 
 import Signal exposing (Mailbox, mailbox)
-
 import Debug exposing (log)
-import Model exposing (Model)
+
+import Chronicle.Model exposing (Model, Feeling)
 
 
 type Action
   = NoOp
-  | Initialize (List Model.Feeling)
+  | Initialize (List Feeling)
   | Search String
   | Add String
 

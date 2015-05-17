@@ -1,12 +1,12 @@
-module Database where
+module Chronicle.Database where
 
 import Task         exposing (Task, ThreadID, andThen)
 import Signal       exposing (Signal, Mailbox, mailbox, send)
 
 import Http             exposing (Error, get)
 
-import Model
-import Controller
+import Chronicle.Model as Model
+import Chronicle.Controller as Controller
 
 -- Using production table
 tableName : String

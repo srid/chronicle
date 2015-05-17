@@ -1,16 +1,16 @@
-module View where
+module Chronicle.View where
 
 import String exposing (toLower)
 import Signal exposing (Address, message)
 import Date
 import Markdown
-
-import Model
-import Controller
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as HE
-import Bootstrap as B
+
+import Util.Bootstrap as B
+import Chronicle.Model as Model
+import Chronicle.Controller as Controller
 
 
 view : Address Controller.Action -> Model.Model -> Html

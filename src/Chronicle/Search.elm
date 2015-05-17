@@ -1,4 +1,4 @@
-module Search where
+module Chronicle.Search where
 
 import String
 

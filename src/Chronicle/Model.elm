@@ -1,4 +1,4 @@
-module Model where
+module Chronicle.Model where
 
 import List
 import Set
@@ -7,9 +7,9 @@ import Date
 import Json.Decode  as J
 import Json.Decode exposing ((:=))
 
-import Search
-import Util exposing (groupBy)
-import Util as U
+import Chronicle.Search as Search
+import Util.List exposing (groupBy)
+import Util.Json as JU
 
 type alias Model =
   { feelings : List Feeling
@@ -81,10 +81,10 @@ decodeHow =
 decodeFeeling : J.Decoder Feeling
 decodeFeeling = Feeling
   `J.map`    ("how"      := decodeHow)
-  `U.andMap` ("what"     := J.string)
-  `U.andMap` ("trigger"  := J.string)
-  `U.andMap` ("notes"    := J.string)
-  `U.andMap` ("at"       := decodeDate)
+  `JU.andMap` ("what"     := J.string)
+  `JU.andMap` ("trigger"  := J.string)
+  `JU.andMap` ("notes"    := J.string)
+  `JU.andMap` ("at"       := decodeDate)
 
 decodeDate : J.Decoder (Date.Date)
 decodeDate = J.customDecoder J.string Date.fromString

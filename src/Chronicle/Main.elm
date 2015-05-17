@@ -5,11 +5,11 @@ import List
 import Http
 import Html exposing (Html)
 
-import Model
-import View
-import Controller
-import Database
-import App
+import Util.App as App
+import Chronicle.Model as Model
+import Chronicle.View as View
+import Chronicle.Controller as Controller
+import Chronicle.Database as Database
 
 port mainTaskPort : Signal (Task Http.Error ())
 port mainTaskPort =

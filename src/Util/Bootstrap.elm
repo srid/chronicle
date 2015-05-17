@@ -1,7 +1,7 @@
 -- Elm wrapper over http://getbootstrap.com/components/
 -- Adding elements per demand of this project.
 -- Should make this a package one day.
-module Bootstrap where
+module Util.Bootstrap where
 
 import String
 
