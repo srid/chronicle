@@ -21,10 +21,7 @@ update action model =
     Initialize newFeelings ->
       { feelings=newFeelings, search=SearchComponent.initialModel }
     Search a ->
-      let
-        _ = log "Search action" a
-      in
-        { model | search <- (SearchComponent.update a model.search) }
+      { model | search <- (SearchComponent.update a model.search) }
     Add what ->
       let
         _ = log "Add action" what

@@ -12,6 +12,9 @@ import Chronicle.Components.Search as Search
 
 view : Address Controller.Action -> Html
 view address =
-  input [ placeholder "Search text"
-        , HE.on "input" HE.targetValue (message address << Controller.Search << Search.Search)
-        ] []
+  let
+    msg = Search.SearchFor >> Controller.Search >> message address
+  in
+    input [ placeholder "Search"
+          , HE.on "input" HE.targetValue msg
+          ] []

@@ -14,17 +14,18 @@ initialModel = Keywords []
 -- Actions
 
 type Action
-  = Search String
+  = SearchFor String
 
 -- Update
 
 update : Action -> Model -> Model
 update action model =
   case action of
-    Search keywords        -> let
-                                _ = log "[Search] Search action" keywords
-                              in
-                                String.words keywords |> Keywords
+    SearchFor keywords ->
+      let
+        _ = log "[Search] Searching for" keywords
+      in
+        String.words keywords |> Keywords
 
 -- Search complexity is O(n), assuming small number of keywords.
 -- Eventually we have to let postgresql handle the searching.
