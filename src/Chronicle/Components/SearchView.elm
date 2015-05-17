@@ -15,6 +15,7 @@ view address =
   let
     msg = Search.SearchFor >> Controller.Search >> message address
   in
-    input [ placeholder "Search"
+    input [ class "form-control"
+          , placeholder "Search"
           , HE.on "input" HE.targetValue msg
           ] []

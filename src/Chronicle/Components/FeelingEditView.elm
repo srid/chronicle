@@ -14,11 +14,17 @@ view : Address Controller.Action -> FeelingEdit.Model -> Html
 view address {editType, formValue} =
   let
     msgButton = FeelingEdit.Save |> Controller.FeelingEdit
+    buttonLabel = case editType of
+      FeelingEdit.AddNew -> "Add"
+      FeelingEdit.EditExisting -> "Save"
   in
-    div [ ]
+    -- TODO: a select element (not input) for "how" field
+    -- TODO: a textarea for notes
+    div [ class "form-group" ]
     [ input' address FeelingEdit.UpdateWhat formValue.what "What am I feeling?"
     , input' address FeelingEdit.UpdateTrigger formValue.trigger "What triggered it?"
-    , button [ HE.onClick address msgButton ] [ text "Save" ]
+    , button [ class "btn btn-primary"
+             , HE.onClick address msgButton ] [ text buttonLabel ]
     ]
 
 -- input' is an input element for filling in a feeling edit form
@@ -31,6 +37,7 @@ input' address action currentValue placeHolder =
   let
     msg = action >> Controller.FeelingEdit >> message address
   in
-    input [ placeholder placeHolder
+    input [ class "form-control"
+          , placeholder placeHolder
           , value currentValue
           , HE.on "input" HE.targetValue msg] []
