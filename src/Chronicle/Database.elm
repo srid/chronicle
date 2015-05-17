@@ -7,6 +7,7 @@ import Http             exposing (Error, get)
 
 import Chronicle.Model as Model
 import Chronicle.Controller as Controller
+import Chronicle.Components.FeelingList as FeelingList
 
 -- Using production table
 tableName : String
@@ -21,6 +22,9 @@ allUrl =
 -- XXX: must handle error case from `get` using Result x a
 getFeelings : Task Error ()
 getFeelings =
-  get Model.decodeModel allUrl
+  get FeelingList.decodeModel allUrl
     `andThen` \feelings ->
-      send (.address Controller.actions) <| Controller.Initialize feelings
+      feelings
+      |> FeelingList.Initialize
+      |> Controller.FeelingList
+      |> send (.address Controller.actions)

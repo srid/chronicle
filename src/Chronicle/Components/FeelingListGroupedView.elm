@@ -1,8 +1,9 @@
-module Chronicle.View where
+module Chronicle.Components.FeelingListGroupedView where
 
 import String exposing (toLower)
 import Signal exposing (Address)
 import Date
+import List
 import Markdown
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -10,49 +11,27 @@ import Html.Events as HE
 
 import Util.Bootstrap as B
 import Chronicle.Model as Model
+import Chronicle.Data.Feeling exposing (Feeling, How(..))
+import Chronicle.Data.FeelingGroup exposing (FeelingGroup, groupFeelingsByDay, howAggregate)
 import Chronicle.Controller as Controller
+import Chronicle.Components.FeelingList exposing (Model)
 import Chronicle.Components.SearchView as SearchView
+import Chronicle.Components.Search as Search
 
 
-view : Address Controller.Action -> Model.Model -> Html
+view : Address Controller.Action -> Model -> Html
 view address model =
   let
-    feelingGroups = Model.computeModel model
+    feelingGroups = groupFeelingsByDay model
   in
-    B.fluidContainer
-    [ B.pageHeader "Chronicle : Feelings"
-    , viewInput address
-    , div [] (List.map viewFeelingGroup feelingGroups)
-    ]
+    div [] (List.map viewFeelingGroup feelingGroups)
 
-
-viewInput : Address Controller.Action -> Html
-viewInput address =
-  let
-    header  = text "Manage"
-    content = div []
-                [ SearchView.view address
-                , viewAddFeelingForm address
-                ]
-  in
-    B.panel' (Just B.Primary) header content
-
-
-viewAddFeelingForm : Address Controller.Action -> Html
-viewAddFeelingForm address =
-  div [ ]
-  [ input [ name "what", placeholder "What am I feeling?" ] []
-  -- TODO: how to pass value of "what" input above, to the address here?
-  , button [ HE.onClick address <| Controller.Add "TODO" ] [ text "TODO" ]
-  ]
-
-
-viewFeelingGroup : Model.DayFeelings -> Html
+viewFeelingGroup : FeelingGroup -> Html
 viewFeelingGroup (day, feelings) =
   let
     -- FIXME: dayHow and badge must be calculated against unfiltered list
     --        of feelings on this day.
-    dayHow  = Model.howAggregate feelings |> bootstrapContextForHow
+    dayHow  = howAggregate feelings |> bootstrapContextForHow
     badge   = List.length feelings |> toString
     header  = div []
               [ text day
@@ -63,7 +42,7 @@ viewFeelingGroup (day, feelings) =
   in
     B.panel' dayHow header content
 
-viewFeeling :  Model.Feeling -> Html
+viewFeeling :  Feeling -> Html
 viewFeeling feeling =
   li [ class "list-group-item list-group-item-" ]
      [ viewFeelingAt feeling.at
@@ -85,7 +64,7 @@ viewFeelingAt at =
     , text <| dateIntToString <| Date.minute at
     ]
 
-viewFeelingHowOrWhat : Model.How -> String -> Html
+viewFeelingHowOrWhat : How -> String -> Html
 viewFeelingHowOrWhat how what =
   let
     howString    = toLower <| toString how
@@ -100,11 +79,11 @@ viewFeelingTrigger trigger =
                                 , strong [] [ text trigger ]
                                 , text " ) " ]
 
-bootstrapContextForHow : Model.How -> Maybe B.Context
+bootstrapContextForHow : How -> Maybe B.Context
 bootstrapContextForHow how =
   case how of
-    Model.Great -> Just B.Success
-    Model.Good  -> Just B.Info
-    Model.Meh   -> Nothing
-    Model.Bad   -> Just B.Warning
-    Model.Terrible -> Just B.Danger
+    Great -> Just B.Success
+    Good  -> Just B.Info
+    Meh   -> Nothing
+    Bad   -> Just B.Warning
+    Terrible -> Just B.Danger

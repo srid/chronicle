@@ -3,25 +3,27 @@ module Chronicle.Controller where
 import Signal exposing (Mailbox, mailbox)
 import Debug exposing (log)
 
-import Chronicle.Model exposing (Model, Feeling)
-import Chronicle.Components.Search as SearchComponent
+import Chronicle.Model exposing (Model)
+import Chronicle.Data.Feeling exposing (Feeling)
+import Chronicle.Components.Search as Search
+import Chronicle.Components.FeelingList as FeelingList
 
 
 type Action
   = NoOp
-  | Initialize (List Feeling)
-  | Search SearchComponent.Action
+  | FeelingList FeelingList.Action
+  | Search Search.Action
   | Add String
 
 update : Action -> Model -> Model
 update action model =
   case action of
-    NoOp                   ->
+    NoOp ->
       model
-    Initialize newFeelings ->
-      { feelings=newFeelings, search=SearchComponent.initialModel }
+    FeelingList a ->
+      { model | feelings <- (FeelingList.update a model.feelings) }
     Search a ->
-      { model | search <- (SearchComponent.update a model.search) }
+      { model | search <- (Search.update a model.search) }
     Add what ->
       let
         _ = log "Add action" what
