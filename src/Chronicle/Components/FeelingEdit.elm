@@ -2,6 +2,9 @@ module Chronicle.Components.FeelingEdit where
 
 import Debug exposing (log)
 
+import Focus
+import Focus exposing ((=>))
+
 import Chronicle.Data.Feeling exposing (Feeling, How)
 import Chronicle.Data.Feeling as Feeling
 
@@ -32,19 +35,16 @@ update : Action -> Model -> Model
 update action model =
   let
     _ = log "[FeelingEdit:action] " action
-    formValue = model.formValue
   in
     case action of
       Save ->
         -- TODO: actually save it to database!
         initialModel
-      UpdateWhat what ->
-        let
-          newValue = { formValue | what <- what }
-        in
-          { model | formValue <- newValue }
-      UpdateTrigger trigger ->
-        let
-          newValue = { formValue | trigger <- trigger }
-        in
-          { model | formValue <- newValue }
+      UpdateWhat w ->
+        Focus.set (formValue => what) w model
+      UpdateTrigger t ->
+        Focus.set (formValue => trigger) t model
+
+formValue = Focus.create .formValue (\f r -> { r | formValue <- f r.formValue })
+what      = Focus.create .what      (\f r -> { r | what      <- f r.what })
+trigger   = Focus.create .trigger   (\f r -> { r | trigger   <- f r.trigger })

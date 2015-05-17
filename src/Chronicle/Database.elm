@@ -1,9 +1,9 @@
 module Chronicle.Database where
 
-import Task         exposing (Task, ThreadID, andThen)
-import Signal       exposing (Signal, Mailbox, mailbox, send)
+import Signal
+import Task exposing (Task, andThen)
 
-import Http             exposing (Error, get)
+import Http exposing (Error, get)
 
 import Chronicle.Model as Model
 import Chronicle.Controller as Controller
@@ -27,4 +27,4 @@ getFeelings =
       feelings
       |> FeelingList.Initialize
       |> Controller.FeelingList
-      |> send (.address Controller.actions)
+      |> Signal.send (.address Controller.actions)
