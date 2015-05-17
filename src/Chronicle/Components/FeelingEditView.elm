@@ -13,14 +13,24 @@ import Chronicle.Components.FeelingEdit as FeelingEdit
 view : Address Controller.Action -> FeelingEdit.Model -> Html
 view address {editType, formValue} =
   let
-    -- TODO: how to pass value of "what" input above, to the address here?
     msgButton = FeelingEdit.Save |> Controller.FeelingEdit
-    msgWhat = FeelingEdit.UpdateWhat >> Controller.FeelingEdit >> message address
   in
     div [ ]
-    [ input [ name "what"
-            , placeholder "What am I feeling?"
-            , value formValue.what
-            , HE.on "input" HE.targetValue msgWhat] []
+    [ input' address FeelingEdit.UpdateWhat formValue.what "What am I feeling?"
+    , input' address FeelingEdit.UpdateTrigger formValue.trigger "What triggered it?"
     , button [ HE.onClick address msgButton ] [ text "Save" ]
     ]
+
+-- input' is an input element for filling in a feeling edit form
+input' : Address Controller.Action
+      -> (String -> FeelingEdit.Action)
+      -> String
+      -> String
+      -> Html
+input' address action currentValue placeHolder =
+  let
+    msg = action >> Controller.FeelingEdit >> message address
+  in
+    input [ placeholder placeHolder
+          , value currentValue
+          , HE.on "input" HE.targetValue msg] []

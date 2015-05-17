@@ -32,6 +32,7 @@ update : Action -> Model -> Model
 update action model =
   let
     _ = log "[FeelingEdit:action] " action
+    formValue = model.formValue
   in
     case action of
       Save ->
@@ -39,7 +40,11 @@ update action model =
         initialModel
       UpdateWhat what ->
         let
-          formValue = model.formValue
           newValue = { formValue | what <- what }
+        in
+          { model | formValue <- newValue }
+      UpdateTrigger trigger ->
+        let
+          newValue = { formValue | trigger <- trigger }
         in
           { model | formValue <- newValue }
