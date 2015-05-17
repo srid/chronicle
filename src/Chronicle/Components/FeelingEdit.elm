@@ -2,11 +2,12 @@ module Chronicle.Components.FeelingEdit where
 
 import Debug exposing (log)
 
-import Chronicle.Data.Feeling exposing (Feeling)
+import Chronicle.Data.Feeling exposing (Feeling, How)
+import Chronicle.Data.Feeling as Feeling
 
 type alias Model =
   { editType : EditType
-  , formValues : Maybe Feeling
+  , formValue : Feeling
   }
 
 type EditType
@@ -14,20 +15,31 @@ type EditType
     | EditExisting
 
 initialModel : Model
-initialModel = { editType=AddNew, formValues=Nothing }
+initialModel = { editType=AddNew, formValue=Feeling.default }
 
 -- Actions
 
 type Action
-  = UpdateFields String
+  = UpdateHow How
+  | UpdateWhat String
+  | UpdateTrigger String
+  | UpdateNotes String
+  | Save
 
 -- Update
 
 update : Action -> Model -> Model
 update action model =
-  case action of
-    UpdateFields whatever ->
-      let
-        _ = log "[FeelingEdit] Updating fields with " whatever
-      in
-        model
+  let
+    _ = log "[FeelingEdit:action] " action
+  in
+    case action of
+      Save ->
+        -- TODO: actually save it to database!
+        initialModel
+      UpdateWhat what ->
+        let
+          formValue = model.formValue
+          newValue = { formValue | what <- what }
+        in
+          { model | formValue <- newValue }

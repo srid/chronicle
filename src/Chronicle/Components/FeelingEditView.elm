@@ -10,13 +10,17 @@ import Util.Bootstrap as B
 import Chronicle.Controller as Controller
 import Chronicle.Components.FeelingEdit as FeelingEdit
 
-view : Address Controller.Action -> Html
-view address =
+view : Address Controller.Action -> FeelingEdit.Model -> Html
+view address {editType, formValue} =
   let
     -- TODO: how to pass value of "what" input above, to the address here?
-    msg = "TODO" |> FeelingEdit.UpdateFields |> Controller.FeelingEdit
+    msgButton = FeelingEdit.Save |> Controller.FeelingEdit
+    msgWhat = FeelingEdit.UpdateWhat >> Controller.FeelingEdit >> message address
   in
     div [ ]
-    [ input [ name "what", placeholder "What am I feeling?" ] []
-    , button [ HE.onClick address msg ] [ text "TODO" ]
+    [ input [ name "what"
+            , placeholder "What am I feeling?"
+            , value formValue.what
+            , HE.on "input" HE.targetValue msgWhat] []
+    , button [ HE.onClick address msgButton ] [ text "Save" ]
     ]

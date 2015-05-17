@@ -18,18 +18,18 @@ view address model =
   in
     B.fluidContainer
     [ B.pageHeader "Chronicle : Feelings"
-    , viewInput address
+    , viewInput address model'
     , FeelingListGroupedView.view address model'.feelings
     ]
 
 
-viewInput : Address Controller.Action -> Html
-viewInput address =
+viewInput : Address Controller.Action -> Model.Model -> Html
+viewInput address model =
   let
     header  = text "Manage"
     content = div []
                 [ SearchView.view      address
-                , FeelingEditView.view address
+                , FeelingEditView.view address model.feelingEdit
                 ]
   in
     B.panel' (Just B.Primary) header content

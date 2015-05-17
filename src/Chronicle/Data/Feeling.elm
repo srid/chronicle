@@ -26,6 +26,14 @@ isFelicitous how =
     Good        -> True
     otherwise   -> False
 
+default : Feeling
+default = { how = Meh
+          , what = ""
+          , trigger = ""
+          , notes = ""
+          , at = Date.fromTime 0
+          }
+
 feelingToString : Feeling -> String
 feelingToString feeling =
   String.join " " <| List.map (\f -> f feeling)
