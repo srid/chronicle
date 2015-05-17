@@ -26,7 +26,6 @@ update action model =
                               in
                                 String.words keywords |> Keywords
 
-
 -- Search complexity is O(n), assuming small number of keywords.
 -- Eventually we have to let postgresql handle the searching.
 search : Model -> (a -> String) -> List a -> List a

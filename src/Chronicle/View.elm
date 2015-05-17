@@ -1,7 +1,7 @@
 module Chronicle.View where
 
 import String exposing (toLower)
-import Signal exposing (Address, message)
+import Signal exposing (Address)
 import Date
 import Markdown
 import Html exposing (..)
@@ -11,7 +11,7 @@ import Html.Events as HE
 import Util.Bootstrap as B
 import Chronicle.Model as Model
 import Chronicle.Controller as Controller
-import Chronicle.Components.Search as SearchComponent
+import Chronicle.Components.SearchView as SearchView
 
 
 view : Address Controller.Action -> Model.Model -> Html
@@ -31,17 +31,11 @@ viewInput address =
   let
     header  = text "Manage"
     content = div []
-                [ viewSearchInput address
+                [ SearchView.view address
                 , viewAddFeelingForm address
                 ]
   in
     B.panel' (Just B.Primary) header content
-
-viewSearchInput : Address Controller.Action -> Html
-viewSearchInput address =
-  input [ placeholder "Search text"
-        , HE.on "input" HE.targetValue (message address << Controller.Search << SearchComponent.Search)
-        ] []
 
 
 viewAddFeelingForm : Address Controller.Action -> Html
