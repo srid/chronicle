@@ -13,7 +13,7 @@ import Chronicle.Components.Search as SearchComponent
 
 type alias Model =
   { feelings : List Feeling
-  , keywords : SearchComponent.Model
+  , search : SearchComponent.Model
   }
 
 type alias Feeling =
@@ -35,8 +35,8 @@ isFelicitous how =
     otherwise   -> False
 
 computeModel : Model -> (List DayFeelings)
-computeModel {feelings, keywords} =
-  groupFeelings <| SearchComponent.search keywords feelingToString feelings
+computeModel {feelings, search} =
+  groupFeelings <| SearchComponent.search search feelingToString feelings
 
 feelingToString : Feeling -> String
 feelingToString feeling =
@@ -94,7 +94,7 @@ decodeModel = J.list decodeFeeling
 
 initialModel : Model
 initialModel = { feelings=[]
-               , keywords=SearchComponent.initialModel
+               , search=SearchComponent.initialModel
                }
 
 

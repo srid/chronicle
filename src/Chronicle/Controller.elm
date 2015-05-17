@@ -19,12 +19,12 @@ update action model =
     NoOp                   ->
       model
     Initialize newFeelings ->
-      { feelings=newFeelings, keywords=SearchComponent.initialModel }
+      { feelings=newFeelings, search=SearchComponent.initialModel }
     Search a ->
       let
         _ = log "Search action" a
       in
-        { model | keywords <- (SearchComponent.update a model.keywords) }
+        { model | search <- (SearchComponent.update a model.search) }
     Add what ->
       let
         _ = log "Add action" what
