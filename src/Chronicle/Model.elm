@@ -7,13 +7,13 @@ import Date
 import Json.Decode  as J
 import Json.Decode exposing ((:=))
 
-import Chronicle.Search as Search
-import Util.List exposing (groupBy)
 import Util.Json as JU
+import Util.List exposing (groupBy)
+import Chronicle.Components.Search as SearchComponent
 
 type alias Model =
   { feelings : List Feeling
-  , keywords : String
+  , keywords : SearchComponent.Model
   }
 
 type alias Feeling =
@@ -36,7 +36,7 @@ isFelicitous how =
 
 computeModel : Model -> (List DayFeelings)
 computeModel {feelings, keywords} =
-  groupFeelings <| Search.search keywords feelingToString feelings
+  groupFeelings <| SearchComponent.search keywords feelingToString feelings
 
 feelingToString : Feeling -> String
 feelingToString feeling =
@@ -93,7 +93,9 @@ decodeModel : J.Decoder (List Feeling)
 decodeModel = J.list decodeFeeling
 
 initialModel : Model
-initialModel = { feelings=[], keywords="" }
+initialModel = { feelings=[]
+               , keywords=SearchComponent.initialModel
+               }
 
 
 -- Grouping type

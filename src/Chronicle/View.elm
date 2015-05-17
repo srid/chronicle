@@ -11,6 +11,7 @@ import Html.Events as HE
 import Util.Bootstrap as B
 import Chronicle.Model as Model
 import Chronicle.Controller as Controller
+import Chronicle.Components.Search as SearchComponent
 
 
 view : Address Controller.Action -> Model.Model -> Html
@@ -39,7 +40,7 @@ viewInput address =
 viewSearchInput : Address Controller.Action -> Html
 viewSearchInput address =
   input [ placeholder "Search text"
-        , HE.on "input" HE.targetValue (message address << Controller.Search)
+        , HE.on "input" HE.targetValue (message address << Controller.Search << SearchComponent.Search)
         ] []
 
 
