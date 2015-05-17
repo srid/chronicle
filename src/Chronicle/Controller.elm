@@ -12,8 +12,8 @@ import Chronicle.Components.FeelingEdit as FeelingEdit
 
 type Action
   = NoOp
+  | Search      Search.Action
   | FeelingEdit FeelingEdit.Action
-  | Search Search.Action
   | FeelingList FeelingList.Action
 
 update : Action -> Model -> Model
