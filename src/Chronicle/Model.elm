@@ -12,15 +12,18 @@ import Util.Json as JU
 import Chronicle.Data.Feeling exposing (feelingToString)
 import Chronicle.Components.Search as Search
 import Chronicle.Components.FeelingList as FeelingList
+import Chronicle.Components.FeelingEdit as FeelingEdit
 
 type alias Model =
   { feelings : FeelingList.Model
   , search   : Search.Model
+  , feelingEdit : FeelingEdit.Model
   }
 
 initialModel : Model
 initialModel = { feelings=FeelingList.initialModel
                , search=Search.initialModel
+               , feelingEdit=FeelingEdit.initialModel
                }
 
 -- transform model based on its info before view rendering

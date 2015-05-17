@@ -7,13 +7,14 @@ import Chronicle.Model exposing (Model)
 import Chronicle.Data.Feeling exposing (Feeling)
 import Chronicle.Components.Search as Search
 import Chronicle.Components.FeelingList as FeelingList
+import Chronicle.Components.FeelingEdit as FeelingEdit
 
 
 type Action
   = NoOp
-  | FeelingList FeelingList.Action
+  | FeelingEdit FeelingEdit.Action
   | Search Search.Action
-  | Add String
+  | FeelingList FeelingList.Action
 
 update : Action -> Model -> Model
 update action model =
@@ -24,11 +25,8 @@ update action model =
       { model | feelings <- (FeelingList.update a model.feelings) }
     Search a ->
       { model | search <- (Search.update a model.search) }
-    Add what ->
-      let
-        _ = log "Add action" what
-     in
-       model
+    FeelingEdit a ->
+      { model | feelingEdit <- (FeelingEdit.update a model.feelingEdit) }
 
 actions : Mailbox Action
 actions =
