@@ -24,4 +24,4 @@ dropWhile predicate list =
   case list of
     []       -> []
     hd::tl   -> if | (predicate hd) -> dropWhile predicate tl
-                   | otherwise -> tl
+                   | otherwise -> hd::tl
