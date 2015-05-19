@@ -2,6 +2,7 @@ import Task         exposing (Task, andThen)
 import Signal       exposing (Signal)
 import Signal
 import List
+import Debug exposing (log)
 
 import Http
 import Html exposing (Html)
@@ -40,15 +41,9 @@ id x =
 
 runAndSend : Controller.Request -> Task Http.Error ()
 runAndSend r =
-  Controller.run r `andThen`
+  Controller.run (log "Running request" r) `andThen`
     Signal.send (.address Controller.actions)
 
 port requestPort : Signal (Task Http.Error ())
 port requestPort =
   Signal.map runAndSend request
-
-
--- XXX: Leverage Request runs to do this..
-port mainTaskPort : Signal (Task Http.Error ())
-port mainTaskPort =
-  .signal <| Signal.mailbox Database.getFeelings

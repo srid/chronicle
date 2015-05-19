@@ -1,7 +1,10 @@
 module Chronicle.Components.FeelingList where
 
 import Json.Decode  as J
+import Task
+import Http
 
+import Chronicle.Database as Database
 import Chronicle.Data.Feeling exposing (Feeling, decodeFeeling)
 
 type alias Model = List Feeling
@@ -21,6 +24,20 @@ update action model =
 
 initialModel : Model
 initialModel = []
+
+-- Request
+
+type Request =
+  InitializeRequest
+
+initialRequest : Request
+initialRequest = InitializeRequest
+
+run : Request -> Task.Task Http.Error Action
+run r =
+  case r of
+    InitializeRequest ->
+      Task.map Initialize <| Http.get decodeModel Database.allUrl
 
 -- JSON decoders
 

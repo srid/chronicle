@@ -21,17 +21,16 @@ type Action
   | FeelingList FeelingList.Action
   | Reload      Reload.Action
 
-type Request = Request Action
+type Request
+  = FeelingListRequest FeelingList.Request
 
 initialRequest : Request
-initialRequest = Request NoOp
+initialRequest = FeelingListRequest FeelingList.InitializeRequest
 
 run : Request -> Task Http.Error Action
 run r =
-  let _ = log "Running request" r
-  in
   case r of
-    (Request NoOp) -> Task.succeed NoOp
+    (FeelingListRequest r') -> Task.map FeelingList <| FeelingList.run r'
 
 type alias Update = Action -> Model -> (Model, Maybe Request)
 
