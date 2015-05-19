@@ -2,6 +2,9 @@ module Chronicle.Controller where
 
 import Signal exposing (Mailbox, mailbox)
 import Debug exposing (log)
+import Task exposing (Task)
+import Task
+import Http
 
 import Chronicle.Model exposing (Model)
 import Chronicle.Data.Feeling exposing (Feeling)
@@ -18,8 +21,27 @@ type Action
   | FeelingList FeelingList.Action
   | Reload      Reload.Action
 
-update : Action -> Model -> Model
-update action model =
+type Request = Request Action
+
+initialRequest : Request
+initialRequest = Request NoOp
+
+run : Request -> Task Http.Error Action
+run r =
+  let _ = log "Running request" r
+  in
+  case r of
+    (Request NoOp) -> Task.succeed NoOp
+
+type alias Update = Action -> Model -> (Model, Maybe Request)
+
+-- Temporary wrapper until we change all update functions.
+update : Update
+update =
+  (\a m -> (update0 a m, Nothing))
+
+update0 : Action -> Model -> Model
+update0 action model =
   case action of
     NoOp ->
       model
