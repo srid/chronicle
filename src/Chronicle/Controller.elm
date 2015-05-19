@@ -32,7 +32,7 @@ run : Request -> Task Http.Error Action
 run r =
   case r of
     (FeelingListRequest r') -> Task.map FeelingList <| FeelingList.run r'
-    (FeelingEditRequest r') -> Task.map FeelingList <| FeelingEdit.run r'
+    (FeelingEditRequest r') -> Task.map Reload <| FeelingEdit.run r'
 
 justModel : Model -> (Model, Maybe Request)
 justModel model =

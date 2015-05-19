@@ -2,6 +2,7 @@ module Chronicle.Components.FeelingEdit where
 
 import Task
 import Task exposing (Task)
+import Json.Decode as JD
 import Debug exposing (log)
 
 import Http
@@ -12,6 +13,7 @@ import Chronicle.Database as Database
 import Chronicle.Data.Feeling exposing (Feeling, How)
 import Chronicle.Data.Feeling as Feeling
 import Chronicle.Components.FeelingList as FeelingList
+import Chronicle.Components.Reload as Reload
 
 type alias Model =
   { editType : EditType
@@ -66,7 +68,7 @@ justModel model =
 type Request
   = PostgrestInsert Feeling
 
-run : Request -> Task Http.Error FeelingList.Action
+run : Request -> Task Http.Error Reload.Action
 run r =
   case r of
     PostgrestInsert feeling ->
@@ -74,6 +76,9 @@ run r =
         feeling
         |> Feeling.encode
         |> Http.string
-        |> Http.post Feeling.decodeFeeling Database.tableUrl
+        |> Http.post (JD.succeed True) Database.tableUrl
       in
-        Task.map FeelingList.Add <| insert feeling
+        -- Reload everything after adding the feeling. In the ideal world, we
+        -- only add the added record, but for now let's just reload
+        -- "just in case".
+        Task.map (always Reload.Reload) <| insert feeling
