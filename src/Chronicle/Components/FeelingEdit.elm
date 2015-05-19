@@ -45,12 +45,15 @@ update action model =
       Save ->
         -- TODO: actually save it to database!
         (initialModel, Just <| PostgrestInsert model.formValue)
+      UpdateHow h ->
+        justModel <| Focus.set (formValue => how) h model
       UpdateWhat w ->
         justModel <| Focus.set (formValue => what) w model
       UpdateTrigger t ->
         justModel <| Focus.set (formValue => trigger) t model
 
 formValue = Focus.create .formValue (\f r -> { r | formValue <- f r.formValue })
+how       = Focus.create .how       (\f r -> { r | how       <- f r.how })
 what      = Focus.create .what      (\f r -> { r | what      <- f r.what })
 trigger   = Focus.create .trigger   (\f r -> { r | trigger   <- f r.trigger })
 

@@ -46,17 +46,19 @@ feelingToString feeling =
 
 -- JSON decoders
 
-decodeHow : J.Decoder How
-decodeHow =
-  let parseHow s = case s of
+parseHow : String -> Result String How
+parseHow s =
+  case s of
     "great"     -> Ok Great
     "good"      -> Ok Good
     "meh"       -> Ok Meh
     "bad"       -> Ok Bad
     "terrible"  -> Ok Terrible
     otherwise   -> Err "Invalid `how` field"
-  in
-    J.customDecoder J.string parseHow
+
+decodeHow : J.Decoder How
+decodeHow =
+  J.customDecoder J.string parseHow
 
 decodeFeeling : J.Decoder Feeling
 decodeFeeling = Feeling
