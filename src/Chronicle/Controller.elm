@@ -25,33 +25,37 @@ type Request
   = FeelingListRequest FeelingList.Request
 
 initialRequest : Request
-initialRequest = FeelingListRequest FeelingList.InitializeRequest
+initialRequest = FeelingListRequest FeelingList.Reload
 
 run : Request -> Task Http.Error Action
 run r =
   case r of
     (FeelingListRequest r') -> Task.map FeelingList <| FeelingList.run r'
 
-type alias Update = Action -> Model -> (Model, Maybe Request)
+justUpdate : (Action -> Model -> Model) -> (Action -> Model -> (Model, Maybe Request))
+justUpdate f =
+  (\a m -> (f a m, Nothing))
 
--- Temporary wrapper until we change all update functions.
-update : Update
-update =
-  (\a m -> (update0 a m, Nothing))
+justModel : Model -> (Model, Maybe Request)
+justModel model =
+  (model, Nothing)
 
-update0 : Action -> Model -> Model
-update0 action model =
+update : Action -> Model -> (Model, Maybe Request)
+update action model =
   case action of
     NoOp ->
-      model
+      justModel model
     Search a ->
-      { model | search <- (Search.update a model.search) }
+      justModel { model | search <- (Search.update a model.search) }
     Reload a ->
-      { model | reload <- (Reload.update a model.reload) }
+      let
+        (searchModel, maybeRequest) = Reload.update a model.reload
+      in
+        ({ model | reload <- searchModel }, Maybe.map FeelingListRequest maybeRequest)
     FeelingList a ->
-      { model | feelings <- (FeelingList.update a model.feelings) }
+      justModel { model | feelings <- (FeelingList.update a model.feelings) }
     FeelingEdit a ->
-      { model | feelingEdit <- (FeelingEdit.update a model.feelingEdit) }
+      justModel { model | feelingEdit <- (FeelingEdit.update a model.feelingEdit) }
 
 actions : Mailbox Action
 actions =

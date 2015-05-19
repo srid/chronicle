@@ -11,7 +11,7 @@ import Chronicle.Model as Model
 import Chronicle.Model exposing (Model)
 import Chronicle.View as View
 import Chronicle.Controller as Controller
-import Chronicle.Controller exposing (actions, update, Update)
+import Chronicle.Controller exposing (actions, update)
 import Chronicle.Database as Database
 
 

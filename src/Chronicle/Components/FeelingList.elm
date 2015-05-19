@@ -28,15 +28,15 @@ initialModel = []
 -- Request
 
 type Request =
-  InitializeRequest
+  Reload
 
 initialRequest : Request
-initialRequest = InitializeRequest
+initialRequest = Reload
 
 run : Request -> Task.Task Http.Error Action
 run r =
   case r of
-    InitializeRequest ->
+    Reload ->
       Task.map Initialize <| Http.get decodeModel Database.allUrl
 
 -- JSON decoders

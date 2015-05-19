@@ -3,6 +3,8 @@ module Chronicle.Components.Reload where
 import String
 import Debug exposing (log)
 
+import Chronicle.Components.FeelingList as FeelingList
+
 -- Model
 
 type Model
@@ -18,11 +20,8 @@ type Action
 
 -- Update
 
-update : Action -> Model -> Model
+update : Action -> Model -> (Model, Maybe FeelingList.Request)
 update action model =
   case action of
     Reload ->
-      let
-        _ = log "[Reload] Reloading" model
-      in
-        model
+      (model, Just FeelingList.Reload)
