@@ -13,6 +13,7 @@ type alias Model = List Feeling
 
 type Action
   = Initialize Model
+  | Add Feeling
 
 -- Update
 
@@ -21,6 +22,8 @@ update action model =
   case action of
     Initialize feelings ->
       feelings
+    Add feeling ->
+      feeling :: model
 
 initialModel : Model
 initialModel = []
@@ -37,7 +40,7 @@ run : Request -> Task.Task Http.Error Action
 run r =
   case r of
     Reload ->
-      Task.map Initialize <| Http.get decodeModel Database.allUrl
+      Task.map Initialize <| Http.get decodeModel Database.tableUrl
 
 -- JSON decoders
 

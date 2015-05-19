@@ -23,6 +23,7 @@ type Action
 
 type Request
   = FeelingListRequest FeelingList.Request
+  | FeelingEditRequest FeelingEdit.Request
 
 initialRequest : Request
 initialRequest = FeelingListRequest FeelingList.Reload
@@ -31,6 +32,7 @@ run : Request -> Task Http.Error Action
 run r =
   case r of
     (FeelingListRequest r') -> Task.map FeelingList <| FeelingList.run r'
+    (FeelingEditRequest r') -> Task.map FeelingList <| FeelingEdit.run r'
 
 justUpdate : (Action -> Model -> Model) -> (Action -> Model -> (Model, Maybe Request))
 justUpdate f =
@@ -55,7 +57,10 @@ update action model =
     FeelingList a ->
       justModel { model | feelings <- (FeelingList.update a model.feelings) }
     FeelingEdit a ->
-      justModel { model | feelingEdit <- (FeelingEdit.update a model.feelingEdit) }
+      let
+        (editModel, maybeRequest) = FeelingEdit.update a model.feelingEdit
+      in
+        ({model | feelingEdit <- editModel }, Maybe.map FeelingEditRequest maybeRequest)
 
 actions : Mailbox Action
 actions =
