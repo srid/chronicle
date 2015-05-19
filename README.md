@@ -55,6 +55,25 @@ Use `ALTER ROLE <username> SET timezone = 'America/Vancouver';` to set database 
 
 TODO: dump schema into git repo.
 
+```
+CREATE TABLE feelings_dev (
+    how feelingkind DEFAULT 'meh'::feelingkind NOT NULL,
+    what text,
+    trigger text,
+    notes text,
+    at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+create or replace view "1".feelings_dev as
+SELECT feelings_dev.how,
+   feelings_dev.what,
+   feelings_dev.trigger,
+   feelings_dev.notes,
+   feelings_dev.at
+  FROM feelings_dev
+ ORDER BY feelings_dev.at DESC;
+```
+
 
 ## Elm package ideas
 

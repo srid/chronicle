@@ -71,7 +71,7 @@ decodeDate = J.customDecoder J.string Date.fromString
 
 encode : Feeling -> String
 encode feeling =
-  [ ("how", JE.string (toString feeling.how))
+  [ ("how", (toString >> String.toLower >> JE.string) feeling.how)
   , ("what", JE.string feeling.what)
   , ("trigger", JE.string feeling.trigger)
   , ("notes", JE.string feeling.notes)

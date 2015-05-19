@@ -34,10 +34,6 @@ run r =
     (FeelingListRequest r') -> Task.map FeelingList <| FeelingList.run r'
     (FeelingEditRequest r') -> Task.map FeelingList <| FeelingEdit.run r'
 
-justUpdate : (Action -> Model -> Model) -> (Action -> Model -> (Model, Maybe Request))
-justUpdate f =
-  (\a m -> (f a m, Nothing))
-
 justModel : Model -> (Model, Maybe Request)
 justModel model =
   (model, Nothing)

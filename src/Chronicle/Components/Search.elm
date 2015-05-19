@@ -22,10 +22,7 @@ update : Action -> Model -> Model
 update action model =
   case action of
     SearchFor keywords ->
-      let
-        _ = log "[Search] Searching for" keywords
-      in
-        String.words keywords |> Keywords
+      String.words keywords |> Keywords
 
 -- Search complexity is O(n), assuming small number of keywords.
 -- Eventually we have to let postgresql handle the searching.

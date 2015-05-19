@@ -21,29 +21,25 @@ main =
 
 model' : Signal (Model, Maybe Controller.Request)
 model' =
-  Signal.foldp (\a (m, _) -> update a m) (Model.initialModel, Nothing) actions.signal
+  let
+    f a (m, _) = update (log "Received action" a) m
+  in
+  Signal.foldp f (Model.initialModel, Nothing) actions.signal
 
 model : Signal Model
 model =
   Signal.map fst model'
 
-requestMaybe : Signal (Maybe Controller.Request)
-requestMaybe =
-  Signal.map snd model'
-
 request : Signal Controller.Request
 request =
-  Signal.filterMap id Controller.initialRequest requestMaybe
+  Signal.map snd model'
+  |> Signal.filterMap (\x -> x) Controller.initialRequest
 
-id : a -> a
-id x =
-  x
-
-runAndSend : Controller.Request -> Task Http.Error ()
-runAndSend r =
-  Controller.run (log "Running request" r) `andThen`
-    Signal.send (.address Controller.actions)
+runAndSend : Signal.Mailbox Controller.Action -> Controller.Request -> Task Http.Error ()
+runAndSend mailbox r =
+  Controller.run (log "Running request" r)
+    `andThen` Signal.send mailbox.address
 
 port requestPort : Signal (Task Http.Error ())
 port requestPort =
-  Signal.map runAndSend request
+  Signal.map (runAndSend Controller.actions) request
