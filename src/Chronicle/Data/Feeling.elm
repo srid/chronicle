@@ -4,6 +4,7 @@ import Date
 import String
 import Json.Decode  as J
 import Json.Decode exposing ((:=))
+import Json.Encode as JE
 
 import Util.Json as JU
 
@@ -67,3 +68,15 @@ decodeFeeling = Feeling
 
 decodeDate : J.Decoder (Date.Date)
 decodeDate = J.customDecoder J.string Date.fromString
+
+encode : Feeling -> String
+encode feeling =
+  [ ("how", JE.string (toString feeling.how))
+  , ("what", JE.string feeling.what)
+  , ("trigger", JE.string feeling.trigger)
+  , ("notes", JE.string feeling.notes)
+  -- Ignore 'at' and let the database use the now time.
+  -- XXX: however, don't do this when editing existing fields.
+  ]
+  |> JE.object
+  |> JE.encode 4
