@@ -2,12 +2,13 @@ module Chronicle.Components.FeelingEdit where
 
 import Task
 import Task exposing (Task)
-import Json.Decode as JD
 import Debug exposing (log)
 
 import Http
 import Focus
 import Focus exposing ((=>))
+
+import Util.Http exposing (postDiscardBody)
 
 import Chronicle.Database as Database
 import Chronicle.Data.Feeling exposing (Feeling, How)
@@ -76,7 +77,7 @@ run r =
         feeling
         |> Feeling.encode
         |> Http.string
-        |> Http.post (JD.succeed True) Database.tableUrl
+        |> postDiscardBody Database.tableUrl
       in
         -- Reload everything after adding the feeling. In the ideal world, we
         -- only add the added record, but for now let's just reload
