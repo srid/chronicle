@@ -1,7 +1,7 @@
 module Chronicle.Components.FeelingEdit where
 
 import Task
-import Task exposing (Task)
+import Task exposing (Task, andThen)
 import Debug exposing (log)
 
 import Http
@@ -69,17 +69,20 @@ justModel model =
 type Request
   = PostgrestInsert Feeling
 
-run : Request -> Task Http.Error Reload.Action
+run : Request -> Task Http.Error FeelingList.Action
 run r =
   case r of
     PostgrestInsert feeling ->
-      let insert feeling =
-        feeling
-        |> Feeling.encode
-        |> Http.string
-        |> postDiscardBody Database.tableUrl
+      let
+        insert feeling =
+          feeling
+          |> Feeling.encode
+          |> Http.string
+          |> postDiscardBody Database.tableUrl
+        reloadAll =
+          always <| FeelingList.run FeelingList.Reload
       in
         -- Reload everything after adding the feeling. In the ideal world, we
         -- only add the added record, but for now let's just reload
         -- "just in case".
-        Task.map (always Reload.Reload) <| insert feeling
+        insert feeling `andThen` reloadAll
