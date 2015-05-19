@@ -1,22 +1,26 @@
 import Task         exposing (Task)
-import Signal       exposing (Signal, mailbox)
+import Signal       exposing (Signal)
+import Signal
 import List
 
 import Http
 import Html exposing (Html)
 
-import Util.App as App
 import Chronicle.Model as Model
+import Chronicle.Model exposing (Model)
 import Chronicle.View as View
-import Chronicle.Controller as Controller
+import Chronicle.Controller exposing (actions, update)
 import Chronicle.Database as Database
+
+
+main : Signal Html
+main =
+  Signal.map (View.view actions.address) model
+
+model : Signal Model
+model =
+  Signal.foldp update Model.initialModel actions.signal
 
 port mainTaskPort : Signal (Task Http.Error ())
 port mainTaskPort =
-  .signal <| mailbox Database.getFeelings
-
-main : Signal Html
-main = App.start { model = Model.initialModel
-                 , view = View.view
-                 , update = Controller.update
-                 , actions = Controller.actions }
+  .signal <| Signal.mailbox Database.getFeelings
