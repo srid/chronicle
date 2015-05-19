@@ -1,4 +1,4 @@
-import Task         exposing (Task, andThen)
+import Task         exposing (Task, andThen, mapError)
 import Signal       exposing (Signal)
 import Signal
 import List
@@ -22,7 +22,7 @@ main =
 model' : Signal (Model, Maybe Controller.Request)
 model' =
   let
-    f a (m, _) = update (log "Received action" a) m
+    f a (m, _) = update (log "[ACTION] " a) m
   in
   Signal.foldp f (Model.initialModel, Nothing) actions.signal
 
@@ -37,8 +37,12 @@ request =
 
 runAndSend : Signal.Mailbox Controller.Action -> Controller.Request -> Task Http.Error ()
 runAndSend mailbox r =
-  Controller.run (log "Running request" r)
-    `andThen` Signal.send mailbox.address
+  withErrorLogging <| Controller.run (log "[REQUEST]" r)
+      `andThen` (\action -> Signal.send mailbox.address <| log "[FORWARD ACTION]" action)
+
+withErrorLogging : Task x a -> Task x a
+withErrorLogging task =
+  mapError (log "[TASK ERROR]") task
 
 port requestPort : Signal (Task Http.Error ())
 port requestPort =
