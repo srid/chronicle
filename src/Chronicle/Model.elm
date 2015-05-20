@@ -1,5 +1,6 @@
 module Chronicle.Model where
 
+import Chronicle.Database exposing (tableName)
 import Chronicle.Data.Feeling exposing (feelingToString)
 import Chronicle.Components.Search as Search
 import Chronicle.Components.Reload as Reload
@@ -7,14 +8,16 @@ import Chronicle.Components.FeelingList as FeelingList
 import Chronicle.Components.FeelingEdit as FeelingEdit
 
 type alias Model =
-  { search      : Search.Model
+  { tableName   : String
+  , search      : Search.Model
   , reload      : Reload.Model
   , feelingEdit : FeelingEdit.Model
   , feelings    : FeelingList.Model
   }
 
 initialModel : Model
-initialModel = { search      = Search.initialModel
+initialModel = { tableName   = tableName
+               , search      = Search.initialModel
                , reload      = Reload.initialModel
                , feelingEdit = FeelingEdit.initialModel
                , feelings    = FeelingList.initialModel
