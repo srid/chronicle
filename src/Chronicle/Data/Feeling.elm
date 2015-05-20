@@ -20,6 +20,9 @@ type alias Feeling =
 type How =
   Great | Good | Meh | Bad | Terrible
 
+howValues : List How
+howValues = [Great, Good, Meh, Bad, Terrible]
+
 isFelicitous : How -> Bool
 isFelicitous how =
   case how of
@@ -48,7 +51,7 @@ feelingToString feeling =
 
 parseHow : String -> Result String How
 parseHow s =
-  case s of
+  case String.toLower s of
     "great"     -> Ok Great
     "good"      -> Ok Good
     "meh"       -> Ok Meh

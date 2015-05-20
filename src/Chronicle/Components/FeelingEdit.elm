@@ -48,15 +48,11 @@ update action model =
   in
     case action of
       Save ->
-        -- TODO: actually save it to database!
         (initialModel, Just <| PostgrestInsert model.formValue)
       UpdateHow howString ->
-        let
-          maybeHow = parseHow howString |> toMaybe
-        in
-          case maybeHow of
-            Nothing  -> justModel <| { model | error <- "Invalid value for how" }
-            Just h   -> justModel <| Focus.set (formValue => how) h model
+        case parseHow howString |> toMaybe of
+          Nothing  -> justModel <| { model | error <- "Invalid value for how" }
+          Just h   -> justModel <| Focus.set (formValue => how) h model
       UpdateWhat w ->
         justModel <| Focus.set (formValue => what) w model
       UpdateTrigger t ->
