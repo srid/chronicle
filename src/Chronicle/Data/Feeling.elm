@@ -2,11 +2,13 @@ module Chronicle.Data.Feeling where
 
 import Date
 import String
+import Set
 import Json.Decode  as J
 import Json.Decode exposing ((:=))
 import Json.Encode as JE
 
 import Util.Json as JU
+import Util.Text exposing (mangleText)
 
 
 type alias Feeling =
@@ -46,6 +48,42 @@ feelingToString feeling =
     , (\_ -> if feeling.trigger == "" then "" else "<-") -- To list all entries with trigger set
     , .trigger
     , .notes ]
+
+mangleWhitelist : Set.Set String
+mangleWhitelist =
+  Set.fromList
+  [ "weed"
+  , "realization"
+  , "went"
+  , "out"
+  , "great"
+  , "good"
+  , "enjoy"
+  , "feeling"
+  , "relaxed"
+  , "coffee"
+  , "hackmode"
+  , "motivation"
+  , "habitual"
+  , "now"
+  , "trigger"
+  , "consistent"
+  , "success"
+  , "contemplation"
+  , "appreciation"
+  ]
+
+mangle : Feeling -> Feeling
+mangle feeling =
+  let
+    f = mangleText mangleWhitelist
+  in
+    { how     = feeling.how
+    , what    = f feeling.what
+    , trigger = f feeling.trigger
+    , notes   = f feeling.notes
+    , at      = feeling.at
+    }
 
 -- JSON decoders
 

@@ -1,7 +1,7 @@
 module Chronicle.Model where
 
 import Chronicle.Database exposing (tableName)
-import Chronicle.Data.Feeling exposing (feelingToString)
+import Chronicle.Data.Feeling as Feeling
 import Chronicle.Components.Search as Search
 import Chronicle.Components.Reload as Reload
 import Chronicle.Components.FeelingList as FeelingList
@@ -9,6 +9,7 @@ import Chronicle.Components.FeelingEdit as FeelingEdit
 
 type alias Model =
   { tableName   : String
+  , demoMode    : Bool
   , search      : Search.Model
   , reload      : Reload.Model
   , feelingEdit : FeelingEdit.Model
@@ -17,6 +18,7 @@ type alias Model =
 
 initialModel : Model
 initialModel = { tableName   = tableName
+               , demoMode    = False -- TODO: expose this to View
                , search      = Search.initialModel
                , reload      = Reload.initialModel
                , feelingEdit = FeelingEdit.initialModel
@@ -27,6 +29,8 @@ initialModel = { tableName   = tableName
 transformModel : Model -> Model
 transformModel model =
   let
-    feelings' = Search.search model.search feelingToString model.feelings
+    feelings' = model.feelings
+      |> Search.search model.search Feeling.feelingToString
+      |> List.map (if model.demoMode then Feeling.mangle else (\x -> x))
   in
     { model | feelings <- feelings' }

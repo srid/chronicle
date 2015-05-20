@@ -3,7 +3,7 @@ module Chronicle.Database where
 -- Using production table
 tableName : String
 tableName =
-  "feelings_dev"
+  "feelings"
 
 tableUrl : String
 tableUrl =
