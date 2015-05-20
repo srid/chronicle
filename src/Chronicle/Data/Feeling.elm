@@ -52,13 +52,12 @@ feelingToString feeling =
 mangleWhitelist : Set.Set String
 mangleWhitelist =
   Set.fromList
-  [ "weed"
-  , "realization"
+  [ "realization"
   , "went"
-  , "out"
   , "great"
   , "good"
   , "enjoy"
+  , "out"
   , "feeling"
   , "relaxed"
   , "coffee"
