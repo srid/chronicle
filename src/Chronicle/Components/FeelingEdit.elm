@@ -54,11 +54,14 @@ update action model =
         justModel <| Focus.set (formValue => what) w model
       UpdateTrigger t ->
         justModel <| Focus.set (formValue => trigger) t model
+      UpdateNotes t ->
+        justModel <| Focus.set (formValue => notes) t model
 
 formValue = Focus.create .formValue (\f r -> { r | formValue <- f r.formValue })
 how       = Focus.create .how       (\f r -> { r | how       <- f r.how })
 what      = Focus.create .what      (\f r -> { r | what      <- f r.what })
 trigger   = Focus.create .trigger   (\f r -> { r | trigger   <- f r.trigger })
+notes     = Focus.create .notes     (\f r -> { r | notes     <- f r.notes })
 
 justModel : Model -> (Model, Maybe Request)
 justModel model =

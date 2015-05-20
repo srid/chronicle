@@ -19,6 +19,7 @@ view address {editType, formValue} =
     formElements = [ StringInput address updateHow' "How am I feeling?" (toString formValue.how)
                    , StringInput address FeelingEdit.UpdateWhat "What is the feeling?" formValue.what
                    , StringInput address FeelingEdit.UpdateTrigger "What triggered it?" formValue.trigger
+                   , MultilineStringInput address FeelingEdit.UpdateNotes "Notes" formValue.notes
                    ]
     msgButton = FeelingEdit.Save |> Controller.FeelingEdit
     buttonLabel = case editType of
@@ -43,26 +44,30 @@ parseHowWithDefault default string =
 
 type FormInput
   = StringInput (Address Controller.Action) (String -> FeelingEdit.Action) String String
+  | MultilineStringInput (Address Controller.Action) (String -> FeelingEdit.Action) String String
 
 viewFormInput : FormInput -> Html
 viewFormInput fi =
   case fi of
     (StringInput address toAction placeHolder value) ->
-      input' address toAction value placeHolder
+      input' input address toAction value placeHolder
+    (MultilineStringInput address toAction placeHolder value) ->
+      input' textarea address toAction value placeHolder
 
-input' : Address Controller.Action
+input' : (List Attribute -> List Html -> Html)
+      -> Address Controller.Action
       -> (String -> FeelingEdit.Action)
       -> String
       -> String
       -> Html
-input' address action currentValue placeHolder =
+input' control address action currentValue placeHolder =
   let
     msg = action >> Controller.FeelingEdit >> message address
   in
-    input [ class "form-control"
-          , placeholder placeHolder
-          , value currentValue
-          , HE.on "input" HE.targetValue msg] []
+    control [ class "form-control"
+           , placeholder placeHolder
+           , value currentValue
+           , HE.on "input" HE.targetValue msg] []
 
 updateHow' : String -> FeelingEdit.Action
 updateHow' =
