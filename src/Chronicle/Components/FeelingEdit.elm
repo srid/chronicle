@@ -3,6 +3,7 @@ module Chronicle.Components.FeelingEdit where
 import Task
 import Task exposing (Task, andThen)
 import Debug exposing (log)
+import Result exposing (toMaybe)
 
 import Http
 import Focus
@@ -11,7 +12,7 @@ import Focus exposing ((=>))
 import Util.Http exposing (postDiscardBody)
 
 import Chronicle.Database as Database
-import Chronicle.Data.Feeling exposing (Feeling, How)
+import Chronicle.Data.Feeling exposing (Feeling, How, parseHow)
 import Chronicle.Data.Feeling as Feeling
 import Chronicle.Components.FeelingList as FeelingList
 import Chronicle.Components.Reload as Reload
@@ -19,6 +20,7 @@ import Chronicle.Components.Reload as Reload
 type alias Model =
   { editType : EditType
   , formValue : Feeling
+  , error : String  -- Idealy this should be a Map from field to error
   }
 
 type EditType
@@ -26,12 +28,12 @@ type EditType
     | EditExisting
 
 initialModel : Model
-initialModel = { editType=AddNew, formValue=Feeling.default }
+initialModel = { editType=AddNew, formValue=Feeling.default, error="" }
 
 -- Actions
 
 type Action
-  = UpdateHow How
+  = UpdateHow String
   | UpdateWhat String
   | UpdateTrigger String
   | UpdateNotes String
@@ -48,8 +50,13 @@ update action model =
       Save ->
         -- TODO: actually save it to database!
         (initialModel, Just <| PostgrestInsert model.formValue)
-      UpdateHow h ->
-        justModel <| Focus.set (formValue => how) h model
+      UpdateHow howString ->
+        let
+          maybeHow = parseHow howString |> toMaybe
+        in
+          case maybeHow of
+            Nothing  -> justModel <| { model | error <- "Invalid value for how" }
+            Just h   -> justModel <| Focus.set (formValue => how) h model
       UpdateWhat w ->
         justModel <| Focus.set (formValue => what) w model
       UpdateTrigger t ->

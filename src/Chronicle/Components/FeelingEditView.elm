@@ -14,9 +14,9 @@ import Chronicle.Controller as Controller
 import Chronicle.Components.FeelingEdit as FeelingEdit
 
 view : Address Controller.Action -> FeelingEdit.Model -> Html
-view address {editType, formValue} =
+view address {editType, formValue, error} =
   let
-    formElements = [ StringInput address updateHow' "How am I feeling?" (toString formValue.how)
+    formElements = [ StringInput address FeelingEdit.UpdateHow "How am I feeling?" (toString formValue.how)
                    , StringInput address FeelingEdit.UpdateWhat "What is the feeling?" formValue.what
                    , StringInput address FeelingEdit.UpdateTrigger "What triggered it?" formValue.trigger
                    , MultilineStringInput address FeelingEdit.UpdateNotes "Notes" formValue.notes
@@ -29,22 +29,23 @@ view address {editType, formValue} =
     -- TODO: a select element (not input) for "how" field
     -- TODO: a textarea for notes
     div [ class "form-group" ]
-    (List.map viewFormInput formElements ++
-    [ button [ class "btn btn-primary"
-             , HE.onClick address msgButton ] [ text buttonLabel ]
-    ])
+    ((List.map viewFormInput formElements) ++
+     [ viewFormError error
+     , button [ class "btn btn-primary"
+              , HE.onClick address msgButton ] [ text buttonLabel ]
+     ]
+    )
 
-parseHowWithDefault : How -> String -> How
-parseHowWithDefault default string =
-  parseHow string
-  |> toMaybe
-  |> withDefault default
+viewFormError : String -> Html
+viewFormError error =
+  div [ style [("color",  "red")] ] [ text error ]
 
 -- Form abstraction
 
 type FormInput
   = StringInput (Address Controller.Action) (String -> FeelingEdit.Action) String String
   | MultilineStringInput (Address Controller.Action) (String -> FeelingEdit.Action) String String
+  | OptionInput (Address Controller.Action) (String -> FeelingEdit.Action) String String (List String)
 
 viewFormInput : FormInput -> Html
 viewFormInput fi =
@@ -68,7 +69,3 @@ input' control address action currentValue placeHolder =
            , placeholder placeHolder
            , value currentValue
            , HE.on "input" HE.targetValue msg] []
-
-updateHow' : String -> FeelingEdit.Action
-updateHow' =
-  parseHowWithDefault Meh >> FeelingEdit.UpdateHow
