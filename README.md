@@ -2,6 +2,13 @@
 
 This is v2 of [feelings](https://github.com/srid/feelings). Work in progress.
 
+## Motivation
+
+Humans are adept at denialism. The author therefore presumes that only a [data-centric approach](http://www.theatlantic.com/business/archive/2013/10/how-google-uses-data-to-build-a-better-worker/280347/) can be effective at improving human happiness.
+
+Over time of data collection, one can't help but gain insights into what *actually* causes — as opposed to what one [remembers](https://en.wikipedia.org/wiki/List_of_memory_biases) or
+is [taught](https://en.wikipedia.org/wiki/Social_conditioning) to be causing — one's happiness and unhappiness.
+
 ## Tech
 
 * PostgreSQL exposed over the web as a REST API (see [postgrest](https://github.com/begriffs/postgrest))
