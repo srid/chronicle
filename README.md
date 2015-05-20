@@ -1,6 +1,6 @@
 # chronicle
 
-This is v2 of [feelings](https://github.com/srid/feelings). Work in progress.
+This is v2 of [feelings](https://github.com/srid/feelings). Work in progress. Read the sections titled Motivation and WHITEBOARD to understand the idea.
 
 ## Motivation
 
