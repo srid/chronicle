@@ -9,13 +9,17 @@ import Html.Attributes exposing (..)
 import Html.Events as HE
 
 import Util.Bootstrap as B
-import Chronicle.Data.Feeling exposing (parseHow, How(..))
+import Chronicle.Data.Feeling exposing (Feeling, parseHow, How(..))
 import Chronicle.Controller as Controller
 import Chronicle.Components.FeelingEdit as FeelingEdit
 
 view : Address Controller.Action -> FeelingEdit.Model -> Html
 view address {editType, formValue} =
   let
+    formElements = [ StringInput address updateHow' "How am I feeling?" (toString formValue.how)
+                   , StringInput address FeelingEdit.UpdateWhat "What is the feeling?" formValue.what
+                   , StringInput address FeelingEdit.UpdateTrigger "What triggered it?" formValue.trigger
+                   ]
     msgButton = FeelingEdit.Save |> Controller.FeelingEdit
     buttonLabel = case editType of
       FeelingEdit.AddNew -> "Add"
@@ -24,14 +28,28 @@ view address {editType, formValue} =
     -- TODO: a select element (not input) for "how" field
     -- TODO: a textarea for notes
     div [ class "form-group" ]
-    [ input' address (FeelingEdit.UpdateHow << (parseHowWithDefault Meh)) (toString formValue.how) "How am I feeling?"
-    , input' address FeelingEdit.UpdateWhat formValue.what "What am I feeling?"
-    , input' address FeelingEdit.UpdateTrigger formValue.trigger "What triggered it?"
-    , button [ class "btn btn-primary"
+    (List.map viewFormInput formElements ++
+    [ button [ class "btn btn-primary"
              , HE.onClick address msgButton ] [ text buttonLabel ]
-    ]
+    ])
 
--- input' is an input element for filling in a feeling edit form
+parseHowWithDefault : How -> String -> How
+parseHowWithDefault default string =
+  parseHow string
+  |> toMaybe
+  |> withDefault default
+
+-- Form abstraction
+
+type FormInput
+  = StringInput (Address Controller.Action) (String -> FeelingEdit.Action) String String
+
+viewFormInput : FormInput -> Html
+viewFormInput fi =
+  case fi of
+    (StringInput address toAction placeHolder value) ->
+      input' address toAction value placeHolder
+
 input' : Address Controller.Action
       -> (String -> FeelingEdit.Action)
       -> String
@@ -46,8 +64,6 @@ input' address action currentValue placeHolder =
           , value currentValue
           , HE.on "input" HE.targetValue msg] []
 
-parseHowWithDefault : How -> String -> How
-parseHowWithDefault default string =
-  parseHow string
-  |> toMaybe
-  |> withDefault default
+updateHow' : String -> FeelingEdit.Action
+updateHow' =
+  parseHowWithDefault Meh >> FeelingEdit.UpdateHow
