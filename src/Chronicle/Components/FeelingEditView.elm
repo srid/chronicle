@@ -83,5 +83,6 @@ select' address action options currentValue placeHolder =
   let
     msg = action >> Controller.FeelingEdit >> message address
   in
-    select [ HE.on "input" HE.targetValue msg ]
+    select [ class "form-control"
+           , HE.on "input" HE.targetValue msg ]
       <| List.map (\v -> option [ value v ] [ text v ]) options

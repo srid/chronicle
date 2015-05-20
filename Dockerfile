@@ -9,13 +9,8 @@ RUN apt-get update && \
     apt-get clean
 RUN cabal update && ${CABAL_INSTALL} cabal-install
 
-# Install postgrest
-# Using my fork basic auth, --db-uri and static file serving support.
-ENV POSTGREST_REPO "https://github.com/srid/postgrest.git -b heroku "
-RUN git clone ${POSTGREST_REPO} /tmp/postgres
-RUN cd /tmp/postgres && ${CABAL_INSTALL}
 RUN mkdir -p /app/bin
-RUN cp /root/.cabal/bin/* /app/bin/
+ENV PATH /app/bin:$PATH
 
 # Elm 0.15, per http://elm-lang.org/Install.elm
 # Modify this instruction for newer releases.
@@ -26,7 +21,16 @@ RUN mkdir /tmp/elm \
   && ${CABAL_INSTALL} elm-compiler-0.15 elm-package-0.5 elm-make-0.1.2 \
   && ${CABAL_INSTALL} elm-repl-0.4.1 elm-reactor-0.3.1 \
   && cp .cabal-sandbox/bin/* /app/bin/
-ENV PATH /app/bin:$PATH
+
+# Install postgrest
+# Using my fork basic auth, --db-uri and static file serving support.
+ENV POSTGREST_REPO "https://github.com/srid/postgrest.git -b heroku"
+RUN git clone ${POSTGREST_REPO} /tmp/postgres
+RUN cd /tmp/postgres \
+  && cabal sandbox init \
+  && ${CABAL_INSTALL} \
+  && cp .cabal-sandbox/bin/* /app/bin/
+
 
 # Startup scripts for heroku
 RUN mkdir -p /app/.profile.d /app/bin
