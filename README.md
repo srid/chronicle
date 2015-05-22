@@ -44,6 +44,13 @@ All entries belong to a "channel". A channel has a recommended set of metadata. 
 * Channel "work/<company>", with metadata: project, people, hindrance, ...
 * Channel "travel/india-trip-2015", with metadata: location, people, ...
 
+### Fold metrics
+
+When folding also *aggregate* pre-defined metrics from individual entries. This should support:
+
+* the color-coded daily markets in my blackboard
+* habit tracking (eg: contemplate XYZ every day; with count=o or 1, accumulating over week/month/etc)
+
 ### Challenges
 
 * How to represent such a flexible data model (above) without writing specific model/view code in Elm? We currently do this for the 'feelings' data model. Perhaps, just separate the channel spec as directories (`src/Elm/Channels/{Base,Feeling,Work}.elm`) for now, with a 'Base' channel that can be inherited for new channels.
