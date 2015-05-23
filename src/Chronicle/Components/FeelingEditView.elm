@@ -71,7 +71,7 @@ input' control address action currentValue placeHolder =
     control [ class "form-control"
            , placeholder placeHolder
            , value currentValue
-           , HE.on "input" HE.targetValue msg] []
+           , HE.on "change" HE.targetValue msg] []
 
 select' : Address Controller.Action
        -> (String -> FeelingEdit.Action)
@@ -87,5 +87,5 @@ select' address action options currentValue placeHolder =
                          [ text val ]
   in
     select [ class "form-control"
-           , HE.on "input" HE.targetValue msg ]
+           , HE.on "change" HE.targetValue msg ]
       <| List.map option' options
