@@ -23,7 +23,7 @@ type alias Model =
 
 type EditType
     = AddNew
-    | EditExisting Date.Date
+    | EditExisting Int
 
 initialModel : Model
 initialModel = { editType=AddNew, formValue=Feeling.default, error="" }
@@ -50,10 +50,10 @@ update action model =
         case model.editType of
           AddNew          ->
             (initialModel, Just <| PostgrestInsert model.formValue)
-          EditExisting at ->
-            (initialModel, Just <| PostgrestUpdate model.formValue at)
+          EditExisting id ->
+            (initialModel, Just <| PostgrestUpdate model.formValue id)
       EditThis feeling ->
-        justModel <| { initialModel | editType <- EditExisting feeling.at
+        justModel <| { initialModel | editType <- EditExisting feeling.id
                                     , formValue <- feeling
                                     }
       UpdateHow howString ->
@@ -81,7 +81,7 @@ justModel model =
 
 type Request
   = PostgrestInsert Feeling
-  | PostgrestUpdate Feeling Date.Date
+  | PostgrestUpdate Feeling Int
 
 -- Tasks
 
@@ -90,5 +90,5 @@ run r =
   case r of
     PostgrestInsert feeling ->
       Database.insert feeling
-    PostgrestUpdate feeling at ->
-      Database.update feeling at
+    PostgrestUpdate feeling id ->
+      Database.update feeling id
