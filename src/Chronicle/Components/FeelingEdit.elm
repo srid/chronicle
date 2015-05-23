@@ -14,7 +14,6 @@ import Focus exposing ((=>))
 import Chronicle.Database as Database
 import Chronicle.Data.Feeling exposing (Feeling, How, parseHow)
 import Chronicle.Data.Feeling as Feeling
-import Chronicle.Components.FeelingList as FeelingList
 
 type alias Model =
   { editType : EditType
@@ -81,18 +80,10 @@ type Request
 
 -- Tasks
 
-run : Request -> Task Http.Error FeelingList.Action
+run : Request -> Task Http.Error String
 run r =
   case r of
     PostgrestInsert feeling ->
-      Database.insert feeling `andThen` reloadAll
+      Database.insert feeling
     PostgrestUpdate feeling at ->
-      Database.update feeling at `andThen` reloadAll
-
-
--- Reload everything after adding the feeling. In the ideal world, we
--- only add the added record, but for now let's just reload
--- "just in case".
-reloadAll : a -> Task Http.Error FeelingList.Action
-reloadAll =
-  always <| FeelingList.run FeelingList.Reload
+      Database.update feeling at

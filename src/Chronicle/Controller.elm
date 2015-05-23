@@ -2,7 +2,7 @@ module Chronicle.Controller where
 
 import Signal exposing (Mailbox, mailbox)
 import Debug exposing (log)
-import Task exposing (Task)
+import Task exposing (Task, andThen)
 import Task
 import Http
 
@@ -56,8 +56,11 @@ initialRequest = FeelingListRequest FeelingList.Reload
 run : Request -> Task Http.Error Action
 run r =
   case r of
-    (FeelingListRequest r') -> Task.map FeelingList <| FeelingList.run r'
-    (FeelingEditRequest r') -> Task.map FeelingList <| FeelingEdit.run r'
+    (FeelingListRequest r') ->
+      Task.map FeelingList <| FeelingList.run r'
+    (FeelingEditRequest r') ->
+      FeelingEdit.run r' `andThen`
+        (always <| Task.map FeelingList <| FeelingList.run FeelingList.Reload)
 
 actions : Mailbox Action
 actions =
