@@ -108,11 +108,15 @@ decodeFeeling = Feeling
   `JU.andMap` ("notes"    := J.string)
   `JU.andMap` ("at"       := decodeDate)
 
+decodeFeelingList : J.Decoder (List Feeling)
+decodeFeelingList = J.list decodeFeeling
+
+
 decodeDate : J.Decoder (Date.Date)
 decodeDate = J.customDecoder J.string Date.fromString
 
-encode : Feeling -> String
-encode feeling =
+encodeWithoutAt : Feeling -> String
+encodeWithoutAt feeling =
   [ ("how", (toString >> String.toLower >> JE.string) feeling.how)
   , ("what", JE.string feeling.what)
   , ("trigger", JE.string feeling.trigger)

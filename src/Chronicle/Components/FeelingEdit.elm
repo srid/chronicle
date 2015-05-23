@@ -11,8 +11,6 @@ import Http
 import Focus
 import Focus exposing ((=>))
 
-import Util.Http exposing (postDiscardBody)
-
 import Chronicle.Database as Database
 import Chronicle.Data.Feeling exposing (Feeling, How, parseHow)
 import Chronicle.Data.Feeling as Feeling
@@ -89,6 +87,8 @@ run r =
   case r of
     PostgrestInsert feeling ->
       Database.insert feeling `andThen` reloadAll
+    PostgrestUpdate feeling at ->
+      Database.update feeling at `andThen` reloadAll
 
 
 -- Reload everything after adding the feeling. In the ideal world, we
