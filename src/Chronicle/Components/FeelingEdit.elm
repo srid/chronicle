@@ -88,13 +88,8 @@ run : Request -> Task Http.Error FeelingList.Action
 run r =
   case r of
     PostgrestInsert feeling ->
-      insert feeling `andThen` reloadAll
+      Database.insert feeling `andThen` reloadAll
 
-insert : Feeling -> Task Http.Error String
-insert
-  = Feeling.encode
-  >> Http.string
-  >> postDiscardBody Database.tableUrl
 
 -- Reload everything after adding the feeling. In the ideal world, we
 -- only add the added record, but for now let's just reload
