@@ -36,6 +36,7 @@ type Action
   | UpdateTrigger String
   | UpdateNotes String
   | Save
+  | EditThis Feeling
 
 -- Update
 
@@ -51,6 +52,10 @@ update action model =
             (initialModel, Just <| PostgrestInsert model.formValue)
           EditExisting at ->
             (initialModel, Just <| PostgrestUpdate model.formValue at)
+      EditThis feeling ->
+        justModel <| { initialModel | editType <- EditExisting feeling.at
+                                    , formValue <- feeling
+                                    }
       UpdateHow howString ->
         case parseHow howString |> toMaybe of
           Nothing  -> justModel <| { model | error <- "Invalid value for how" }

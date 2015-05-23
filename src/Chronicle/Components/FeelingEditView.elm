@@ -32,8 +32,6 @@ view address {editType, formValue, error} =
       FeelingEdit.AddNew -> "Add"
       FeelingEdit.EditExisting at -> "Save " ++ toString at
   in
-    -- TODO: a select element (not input) for "how" field
-    -- TODO: a textarea for notes
     div [ class "form-group" ]
     ((List.map viewFormInput formElements) ++
      [ viewFormError error

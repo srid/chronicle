@@ -25,3 +25,9 @@ dropWhile predicate list =
     []       -> []
     hd::tl   -> if | (predicate hd) -> dropWhile predicate tl
                    | otherwise -> hd::tl
+
+only : (a -> Bool) -> List a -> Maybe a
+only predicate list =
+  case List.filter predicate list of
+    x::[]     -> Just x
+    otherwise -> Nothing
