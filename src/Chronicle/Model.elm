@@ -3,7 +3,6 @@ module Chronicle.Model where
 import Chronicle.Database exposing (tableName)
 import Chronicle.Data.Feeling as Feeling
 import Chronicle.Components.Search as Search
-import Chronicle.Components.Reload as Reload
 import Chronicle.Components.FeelingList as FeelingList
 import Chronicle.Components.FeelingEdit as FeelingEdit
 
@@ -11,7 +10,6 @@ type alias Model =
   { tableName   : String
   , demoMode    : Bool
   , search      : Search.Model
-  , reload      : Reload.Model
   , feelingEdit : FeelingEdit.Model
   , feelingList : FeelingList.Model
   }
@@ -20,7 +18,6 @@ initialModel : Model
 initialModel = { tableName   = tableName
                , demoMode    = False -- TODO: expose this to View
                , search      = Search.initialModel
-               , reload      = Reload.initialModel
                , feelingEdit = FeelingEdit.initialModel
                , feelingList = FeelingList.initialModel
                }

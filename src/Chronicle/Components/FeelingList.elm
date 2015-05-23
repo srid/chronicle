@@ -10,31 +10,29 @@ import Chronicle.Data.Feeling exposing (Feeling, decodeFeeling)
 
 type alias Model =
   { feelings : List Feeling
-  , editing  : Maybe EditTarget
   }
-
-type EditTarget
-  = AddingNew
-  | EditingThis Date.Date
 
 -- Actions
 
 type Action
   = Initialize (List Feeling)
   | Add Feeling
+  | ReloadAll
 
 -- Update
 
-update : Action -> Model -> Model
+update : Action -> Model -> (Model, Maybe Request)
 update action model =
   case action of
     Initialize feelings ->
-      { initialModel | feelings <- feelings }
+      ({ initialModel | feelings <- feelings }, Nothing)
     Add feeling ->
-      { model | feelings <- feeling :: model.feelings }
+      ({ model | feelings <- feeling :: model.feelings }, Nothing)
+    ReloadAll ->
+      (model, Just Reload)
 
 initialModel : Model
-initialModel = { feelings=[], editing=Nothing }
+initialModel = { feelings=[]} -- editing=FeelingEdit.initialModel }
 
 -- Request
 

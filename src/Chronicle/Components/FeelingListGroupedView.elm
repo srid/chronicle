@@ -15,12 +15,12 @@ import Chronicle.Data.Feeling exposing (Feeling, How(..))
 import Chronicle.Data.FeelingGroup exposing (FeelingGroup, groupFeelingsByDay, howAggregate)
 import Chronicle.Controller as Controller
 import Chronicle.Components.FeelingList exposing (Model)
-import Chronicle.Components.SearchView as SearchView
+import Chronicle.Components.FeelingEditView as FeelingEditView
 import Chronicle.Components.Search as Search
 
 
 view : Address Controller.Action -> Model -> Html
-view address {feelings, editing} =
+view address {feelings} =
   let
     feelingGroups = groupFeelingsByDay feelings
   in

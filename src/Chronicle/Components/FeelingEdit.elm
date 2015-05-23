@@ -15,7 +15,6 @@ import Chronicle.Database as Database
 import Chronicle.Data.Feeling exposing (Feeling, How, parseHow)
 import Chronicle.Data.Feeling as Feeling
 import Chronicle.Components.FeelingList as FeelingList
-import Chronicle.Components.Reload as Reload
 
 type alias Model =
   { editType : EditType

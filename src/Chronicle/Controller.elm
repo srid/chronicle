@@ -9,7 +9,6 @@ import Http
 import Chronicle.Model exposing (Model)
 import Chronicle.Data.Feeling exposing (Feeling)
 import Chronicle.Components.Search as Search
-import Chronicle.Components.Reload as Reload
 import Chronicle.Components.FeelingList as FeelingList
 import Chronicle.Components.FeelingEdit as FeelingEdit
 
@@ -19,7 +18,6 @@ type Action
   | Search      Search.Action
   | FeelingEdit FeelingEdit.Action
   | FeelingList FeelingList.Action
-  | Reload      Reload.Action
 
 type Request
   = FeelingListRequest FeelingList.Request
@@ -45,18 +43,32 @@ update action model =
       justModel model
     Search a ->
       justModel { model | search <- (Search.update a model.search) }
-    Reload a ->
-      let
-        (searchModel, maybeRequest) = Reload.update a model.reload
-      in
-        ({ model | reload <- searchModel }, Maybe.map FeelingListRequest maybeRequest)
     FeelingList a ->
-      justModel { model | feelingList <- (FeelingList.update a model.feelingList) }
+      delegateTo
+        FeelingList.update
+        (\m -> { model | feelingList <- m })
+        (Maybe.map FeelingListRequest)
+        a
+        model.feelingList
     FeelingEdit a ->
-      let
-        (editModel, maybeRequest) = FeelingEdit.update a model.feelingEdit
-      in
-        ({model | feelingEdit <- editModel }, Maybe.map FeelingEditRequest maybeRequest)
+      delegateTo
+        FeelingEdit.update
+        (\m -> { model | feelingEdit <- m })
+        (Maybe.map FeelingEditRequest)
+        a
+        model.feelingEdit
+
+delegateTo : (action -> model -> (model, Maybe request))
+          -> (model -> Model)
+          -> (Maybe request -> Maybe Request)
+          -> action
+          -> model
+          -> (Model, Maybe Request)
+delegateTo update' convertModel convertRequest a m =
+  let
+    (model', request') = update' a m
+  in
+    (convertModel model', convertRequest request')
 
 actions : Mailbox Action
 actions =
