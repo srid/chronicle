@@ -25,7 +25,7 @@ view address {editType, formValue, error} =
     msgButton = FeelingEdit.Save |> Controller.FeelingEdit
     buttonLabel = case editType of
       FeelingEdit.AddNew -> "Add"
-      FeelingEdit.EditExisting -> "Save"
+      FeelingEdit.EditExisting at -> "Save " ++ toString at
   in
     -- TODO: a select element (not input) for "how" field
     -- TODO: a textarea for notes

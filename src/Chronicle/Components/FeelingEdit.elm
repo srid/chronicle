@@ -1,10 +1,12 @@
 module Chronicle.Components.FeelingEdit where
 
+import Date
 import Task
 import Task exposing (Task, andThen)
 import Debug exposing (log)
 import Result exposing (toMaybe)
 
+import Date
 import Http
 import Focus
 import Focus exposing ((=>))
@@ -25,7 +27,7 @@ type alias Model =
 
 type EditType
     = AddNew
-    | EditExisting
+    | EditExisting Date.Date
 
 initialModel : Model
 initialModel = { editType=AddNew, formValue=Feeling.default, error="" }
@@ -48,7 +50,11 @@ update action model =
   in
     case action of
       Save ->
-        (initialModel, Just <| PostgrestInsert model.formValue)
+        case model.editType of
+          AddNew          ->
+            (initialModel, Just <| PostgrestInsert model.formValue)
+          EditExisting at ->
+            (initialModel, Just <| PostgrestUpdate model.formValue at)
       UpdateHow howString ->
         case parseHow howString |> toMaybe of
           Nothing  -> justModel <| { model | error <- "Invalid value for how" }
@@ -74,21 +80,25 @@ justModel model =
 
 type Request
   = PostgrestInsert Feeling
+  | PostgrestUpdate Feeling Date.Date
+
+-- Tasks
 
 run : Request -> Task Http.Error FeelingList.Action
 run r =
   case r of
     PostgrestInsert feeling ->
-      let
-        insert feeling =
-          feeling
-          |> Feeling.encode
-          |> Http.string
-          |> postDiscardBody Database.tableUrl
-        reloadAll =
-          always <| FeelingList.run FeelingList.Reload
-      in
-        -- Reload everything after adding the feeling. In the ideal world, we
-        -- only add the added record, but for now let's just reload
-        -- "just in case".
-        insert feeling `andThen` reloadAll
+      insert feeling `andThen` reloadAll
+
+insert : Feeling -> Task Http.Error String
+insert
+  = Feeling.encode
+  >> Http.string
+  >> postDiscardBody Database.tableUrl
+
+-- Reload everything after adding the feeling. In the ideal world, we
+-- only add the added record, but for now let's just reload
+-- "just in case".
+reloadAll : a -> Task Http.Error FeelingList.Action
+reloadAll =
+  always <| FeelingList.run FeelingList.Reload
