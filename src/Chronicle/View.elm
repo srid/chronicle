@@ -20,7 +20,7 @@ view address model =
     B.fluidContainer
     [ B.pageHeader ["table-" ++ model.tableName] <| "Chronicle : " ++ model.tableName
     , viewInput address model
-    , FeelingListGroupedView.view address model'.feelings
+    , FeelingListGroupedView.view address model'.feelingList
     ]
 
 

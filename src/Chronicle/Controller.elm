@@ -51,7 +51,7 @@ update action model =
       in
         ({ model | reload <- searchModel }, Maybe.map FeelingListRequest maybeRequest)
     FeelingList a ->
-      justModel { model | feelings <- (FeelingList.update a model.feelings) }
+      justModel { model | feelingList <- (FeelingList.update a model.feelingList) }
     FeelingEdit a ->
       let
         (editModel, maybeRequest) = FeelingEdit.update a model.feelingEdit

@@ -13,7 +13,7 @@ type alias Model =
   , search      : Search.Model
   , reload      : Reload.Model
   , feelingEdit : FeelingEdit.Model
-  , feelings    : FeelingList.Model
+  , feelingList : FeelingList.Model
   }
 
 initialModel : Model
@@ -22,15 +22,17 @@ initialModel = { tableName   = tableName
                , search      = Search.initialModel
                , reload      = Reload.initialModel
                , feelingEdit = FeelingEdit.initialModel
-               , feelings    = FeelingList.initialModel
+               , feelingList = FeelingList.initialModel
                }
 
 -- transform model based on its info before view rendering
 transformModel : Model -> Model
 transformModel model =
   let
-    feelings' = model.feelings
+    feelings'    = model.feelingList |> .feelings
       |> Search.search model.search Feeling.feelingToString
       |> List.map (if model.demoMode then Feeling.mangle else (\x -> x))
+    feelingList  = model.feelingList
+    feelingList' = { feelingList | feelings <- feelings' }
   in
-    { model | feelings <- feelings' }
+    { model | feelingList <- feelingList' }

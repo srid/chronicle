@@ -20,9 +20,9 @@ import Chronicle.Components.Search as Search
 
 
 view : Address Controller.Action -> Model -> Html
-view address model =
+view address {feelings, editing} =
   let
-    feelingGroups = groupFeelingsByDay model
+    feelingGroups = groupFeelingsByDay feelings
   in
     div [] (List.map viewFeelingGroup feelingGroups)
 
