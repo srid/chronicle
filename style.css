@@ -2,3 +2,8 @@
 .panel-heading {
   font-weight: bold;
 }
+
+.table-feelings_dev {
+  background-color: orange;
+  color: white;
+}

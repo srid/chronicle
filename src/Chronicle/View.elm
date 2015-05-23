@@ -18,8 +18,8 @@ view address model =
     model' = Model.transformModel model
   in
     B.fluidContainer
-    [ B.pageHeader <| "Chronicle : " ++ model.tableName
-    , viewInput address model'
+    [ B.pageHeader ["table-" ++ model.tableName] <| "Chronicle : " ++ model.tableName
+    , viewInput address model
     , FeelingListGroupedView.view address model'.feelings
     ]
 

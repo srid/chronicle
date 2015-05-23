@@ -38,12 +38,22 @@ label ctx string =
   span [ class ("label label-" ++ contextClassSuffix ctx) ]
   [ text string ]
 
-pageHeader : String -> Html
-pageHeader title =
-  div [ class "page-header" ]
-    [ h1 [] [ text title ]
-    ]
+pageHeader : List String -> String -> Html
+pageHeader extraClasses title =
+  let
+    classes = "page-header" :: extraClasses
+  in
+    div [ withClasses classes ]
+        [ h1 [] [ text title ]
+        ]
 
 fluidContainer : List Html -> Html
 fluidContainer children =
   div [ class "container-fluid" ] children
+
+
+-- Utility
+
+withClasses : List String -> Attribute
+withClasses =
+  classList << List.map (\c -> (c, True))
