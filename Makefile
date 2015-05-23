@@ -14,4 +14,9 @@ compile:
 	cp style.css build/static/style.css
 
 run:	compile
-	cd build && ../../postgrest/dist/build/postgrest/postgrest -p 3000 -D ${DATABASE_URL}
+	cd build/static && \
+		SPAS_USERNAME=user \
+		SPAS_PASSWORD=password \
+		SPAS_V1SCHEMA=1 \
+		PORT=3000 \
+		DATABASE_URL=${DATABASE_URL} ../../../spas/dist/build/spas/spas

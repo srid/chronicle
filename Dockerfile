@@ -22,11 +22,11 @@ RUN mkdir /tmp/elm \
   && ${CABAL_INSTALL} elm-repl-0.4.1 elm-reactor-0.3.1 \
   && cp .cabal-sandbox/bin/* /app/bin/
 
-# Install postgrest
-# Using my fork basic auth, --db-uri and static file serving support.
-ENV POSTGREST_REPO "https://github.com/srid/postgrest.git -b heroku"
-RUN git clone ${POSTGREST_REPO} /tmp/postgres
-RUN cd /tmp/postgres \
+# Install spas
+ENV SPAS_REPO "https://github.com/srid/spas.git "
+RUN git clone ${SPAS_REPO} /tmp/spas
+RUN cd /tmp/spas \
+  && cabal update \
   && cabal sandbox init \
   && ${CABAL_INSTALL} \
   && cp .cabal-sandbox/bin/* /app/bin/

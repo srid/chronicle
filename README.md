@@ -11,9 +11,9 @@ is [taught](https://en.wikipedia.org/wiki/Social_conditioning) to be causing —
 
 ## Tech
 
-* PostgreSQL exposed over the web as a REST API (see [postgrest](https://github.com/begriffs/postgrest))
-* [Elm](http://elm-lang.org/) for FRP-based frontend.
-* [Bootstrap](http://getbootstrap.com/) HTML/CSS framework
+* [spas](https://github.com/srid/spas) (via [PostgREST](https://github.com/begriffs/postgrest)) - automatic REST API for PostgreSQL
+* [Elm](http://elm-lang.org/) - client-side language using FRP
+* [Bootstrap](http://getbootstrap.com/) - HTML/CSS framework
 
 ## HACKING
 
@@ -26,7 +26,7 @@ make release
 and local build for development:
 
 ```
-make run  # run postgrest (TODO: how to get it to build)
+make run  # run spas from parent repo
 make compile # rebuild Elm sources
 ```
 
