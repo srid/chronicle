@@ -3,13 +3,17 @@ module Chronicle.Data.FeelingGroup where
 import Set
 import List
 import String
+import Time
 import Date
 import Util.List exposing (groupBy)
+import Util.Date as Date2
 
 import Chronicle.Data.Feeling exposing (Feeling, How(..), isFelicitous)
 
-
 type alias FeelingGroup = (String, List Feeling)
+
+nightOwlOffset : Time.Time
+nightOwlOffset = 4 * Time.hour  -- Until 4am.
 
 groupFeelingsByDay : List Feeling -> List FeelingGroup
 groupFeelingsByDay =
@@ -35,7 +39,7 @@ howAggregate feelings =
 dayOf : Feeling -> String
 dayOf feeling =
   let
-    at = feeling.at
+    at = Date2.subtract feeling.at nightOwlOffset
   in
     String.join ""
     [ {-- Date.year at  |> toString   <- Need to uncomment in 2016 :-P
