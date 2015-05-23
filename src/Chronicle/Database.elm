@@ -18,13 +18,12 @@ select : Task Http.Error (List Feeling)
 select =
   Spas.select tableName decodeFeelingList
 
-
 insert : Feeling -> Task Http.Error String
 insert
   = Feeling.encodeWithoutAt
   >> Spas.singleInsert tableName
 
-update : Feeling -> Date.Date -> Task Http.Error String
-update feeling at =
+update : Feeling -> Int -> Task Http.Error String
+update feeling id =
   Feeling.encodeWithoutAt feeling
-  |> Spas.update tableName ["at=eq." ++ toString at]
+  |> Spas.update tableName ["id=eq." ++ toString id]
