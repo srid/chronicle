@@ -42,30 +42,27 @@ type Action
 
 update : Action -> Model -> (Model, Maybe Request)
 update action model =
-  let
-    _ = log "[FeelingEdit:action] " action
-  in
-    case action of
-      Save ->
-        case model.editType of
-          AddNew          ->
-            (initialModel, Just <| PostgrestInsert model.formValue)
-          EditExisting id ->
-            (initialModel, Just <| PostgrestUpdate model.formValue id)
-      EditThis feeling ->
-        justModel <| { initialModel | editType <- EditExisting feeling.id
-                                    , formValue <- feeling
-                                    }
-      UpdateHow howString ->
-        case parseHow howString |> toMaybe of
-          Nothing  -> justModel <| { model | error <- "Invalid value for how" }
-          Just h   -> justModel <| Focus.set (formValue => how) h model
-      UpdateWhat w ->
-        justModel <| Focus.set (formValue => what) w model
-      UpdateTrigger t ->
-        justModel <| Focus.set (formValue => trigger) t model
-      UpdateNotes t ->
-        justModel <| Focus.set (formValue => notes) t model
+  case action of
+    Save ->
+      case model.editType of
+        AddNew          ->
+          (initialModel, Just <| PostgrestInsert model.formValue)
+        EditExisting id ->
+          (initialModel, Just <| PostgrestUpdate model.formValue id)
+    EditThis feeling ->
+      justModel <| { initialModel | editType <- EditExisting feeling.id
+                                  , formValue <- feeling
+                                  }
+    UpdateHow howString ->
+      case parseHow howString |> toMaybe of
+        Nothing  -> justModel <| { model | error <- "Invalid value for how" }
+        Just h   -> justModel <| Focus.set (formValue => how) h model
+    UpdateWhat w ->
+      justModel <| Focus.set (formValue => what) w model
+    UpdateTrigger t ->
+      justModel <| Focus.set (formValue => trigger) t model
+    UpdateNotes t ->
+      justModel <| Focus.set (formValue => notes) t model
 
 formValue = Focus.create .formValue (\f r -> { r | formValue <- f r.formValue })
 how       = Focus.create .how       (\f r -> { r | how       <- f r.how })

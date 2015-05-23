@@ -78,9 +78,9 @@ CREATE TABLE feelings_dev (
     at timestamp with time zone DEFAULT now() NOT NULL
 );
 
-create or replace view "1".feelings_dev as
-SELECT *  FROM feelings_dev
- ORDER BY feelings_dev.at DESC;
+create or replace view "1".feelings as
+SELECT *  FROM feelings
+ ORDER BY feelings.at DESC;
 ```
 
 
