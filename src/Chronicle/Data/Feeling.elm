@@ -33,7 +33,7 @@ isFelicitous how =
     otherwise   -> False
 
 default : Feeling
-default = { how = Meh
+default = { how = Good
           , what = ""
           , trigger = ""
           , notes = ""
