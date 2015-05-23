@@ -7,7 +7,6 @@ import Util.Bootstrap as B
 import Chronicle.Model as Model
 import Chronicle.Controller as Controller
 import Chronicle.Components.SearchView as SearchView
-import Chronicle.Components.ReloadView as ReloadView
 import Chronicle.Components.FeelingListGroupedView as FeelingListGroupedView
 import Chronicle.Components.FeelingEditView as FeelingEditView
 
@@ -20,7 +19,7 @@ view address model =
     B.fluidContainer
     [ B.pageHeader ["table-" ++ model.tableName] <| "Chronicle : " ++ model.tableName
     , viewInput address model
-    , FeelingListGroupedView.view address model'.feelings
+    , FeelingListGroupedView.view address model'.feelingList
     ]
 
 
@@ -30,8 +29,6 @@ viewInput address model =
     header  = text "Manage"
     content = div []
                 [ SearchView.view      address
-                , ReloadView.view      address
-                , FeelingEditView.view address model.feelingEdit
                 ]
   in
     B.panel' (Just B.Primary) header content

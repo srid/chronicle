@@ -14,8 +14,6 @@ import Focus exposing ((=>))
 import Chronicle.Database as Database
 import Chronicle.Data.Feeling exposing (Feeling, How, parseHow)
 import Chronicle.Data.Feeling as Feeling
-import Chronicle.Components.FeelingList as FeelingList
-import Chronicle.Components.Reload as Reload
 
 type alias Model =
   { editType : EditType
@@ -25,7 +23,7 @@ type alias Model =
 
 type EditType
     = AddNew
-    | EditExisting Date.Date
+    | EditExisting Int
 
 initialModel : Model
 initialModel = { editType=AddNew, formValue=Feeling.default, error="" }
@@ -38,31 +36,33 @@ type Action
   | UpdateTrigger String
   | UpdateNotes String
   | Save
+  | EditThis Feeling
 
 -- Update
 
 update : Action -> Model -> (Model, Maybe Request)
 update action model =
-  let
-    _ = log "[FeelingEdit:action] " action
-  in
-    case action of
-      Save ->
-        case model.editType of
-          AddNew          ->
-            (initialModel, Just <| PostgrestInsert model.formValue)
-          EditExisting at ->
-            (initialModel, Just <| PostgrestUpdate model.formValue at)
-      UpdateHow howString ->
-        case parseHow howString |> toMaybe of
-          Nothing  -> justModel <| { model | error <- "Invalid value for how" }
-          Just h   -> justModel <| Focus.set (formValue => how) h model
-      UpdateWhat w ->
-        justModel <| Focus.set (formValue => what) w model
-      UpdateTrigger t ->
-        justModel <| Focus.set (formValue => trigger) t model
-      UpdateNotes t ->
-        justModel <| Focus.set (formValue => notes) t model
+  case action of
+    Save ->
+      case model.editType of
+        AddNew          ->
+          (initialModel, Just <| PostgrestInsert model.formValue)
+        EditExisting id ->
+          (initialModel, Just <| PostgrestUpdate model.formValue id)
+    EditThis feeling ->
+      justModel <| { initialModel | editType <- EditExisting feeling.id
+                                  , formValue <- feeling
+                                  }
+    UpdateHow howString ->
+      case parseHow howString |> toMaybe of
+        Nothing  -> justModel <| { model | error <- "Invalid value for how" }
+        Just h   -> justModel <| Focus.set (formValue => how) h model
+    UpdateWhat w ->
+      justModel <| Focus.set (formValue => what) w model
+    UpdateTrigger t ->
+      justModel <| Focus.set (formValue => trigger) t model
+    UpdateNotes t ->
+      justModel <| Focus.set (formValue => notes) t model
 
 formValue = Focus.create .formValue (\f r -> { r | formValue <- f r.formValue })
 how       = Focus.create .how       (\f r -> { r | how       <- f r.how })
@@ -78,22 +78,14 @@ justModel model =
 
 type Request
   = PostgrestInsert Feeling
-  | PostgrestUpdate Feeling Date.Date
+  | PostgrestUpdate Feeling Int
 
 -- Tasks
 
-run : Request -> Task Http.Error FeelingList.Action
+run : Request -> Task Http.Error String
 run r =
   case r of
     PostgrestInsert feeling ->
-      Database.insert feeling `andThen` reloadAll
-    PostgrestUpdate feeling at ->
-      Database.update feeling at `andThen` reloadAll
-
-
--- Reload everything after adding the feeling. In the ideal world, we
--- only add the added record, but for now let's just reload
--- "just in case".
-reloadAll : a -> Task Http.Error FeelingList.Action
-reloadAll =
-  always <| FeelingList.run FeelingList.Reload
+      Database.insert feeling
+    PostgrestUpdate feeling id ->
+      Database.update feeling id

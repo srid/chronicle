@@ -3,6 +3,7 @@ import Signal       exposing (Signal)
 import Signal
 import List
 import Debug exposing (log)
+import String
 
 import Http
 import Html exposing (Html)
@@ -22,7 +23,7 @@ main =
 model' : Signal (Model, Maybe Controller.Request)
 model' =
   let
-    f a (m, _) = update (log "[ACTION] " a) m
+    f a (m, _) = update (logAction "[ACTION] " a) m
   in
   Signal.foldp f (Model.initialModel, Nothing) actions.signal
 
@@ -38,7 +39,7 @@ request =
 runAndSend : Signal.Mailbox Controller.Action -> Controller.Request -> Task Http.Error ()
 runAndSend mailbox r =
   withErrorLogging <| Controller.run (log "[REQUEST]" r)
-      `andThen` (\action -> Signal.send mailbox.address <| log "[FORWARD ACTION]" action)
+      `andThen` (\action -> Signal.send mailbox.address <| logAction "[FORWARD ACTION]" action)
 
 withErrorLogging : Task x a -> Task x a
 withErrorLogging task =
@@ -47,3 +48,14 @@ withErrorLogging task =
 port requestPort : Signal (Task Http.Error ())
 port requestPort =
   Signal.map (runAndSend Controller.actions) request
+
+logAction : String -> Controller.Action -> Controller.Action
+logAction s a =
+  let
+    -- Don't dump entire JSON to console. Limit its length.
+    limit s = case String.length s > 40 of
+                True  -> String.left 40 s ++ " ..."
+                False -> s
+    _       = log s <| limit <| toString a
+  in
+    a
