@@ -12,7 +12,8 @@ import Util.Text exposing (mangleText)
 
 
 type alias Feeling =
-  { how     : How
+  { id      : Int
+  , how     : How
   , what    : String
   , trigger : String
   , notes   : String
@@ -33,7 +34,8 @@ isFelicitous how =
     otherwise   -> False
 
 default : Feeling
-default = { how = Good
+default = { id = 0
+          , how = Good
           , what = ""
           , trigger = ""
           , notes = ""
@@ -77,7 +79,8 @@ mangle feeling =
   let
     f = mangleText mangleWhitelist
   in
-    { how     = feeling.how
+    { id      = feeling.id
+    , how     = feeling.how
     , what    = f feeling.what
     , trigger = f feeling.trigger
     , notes   = f feeling.notes
@@ -102,7 +105,8 @@ decodeHow =
 
 decodeFeeling : J.Decoder Feeling
 decodeFeeling = Feeling
-  `J.map`    ("how"      := decodeHow)
+  `J.map`     ("id"       := J.int)
+  `JU.andMap` ("how"      := decodeHow)
   `JU.andMap` ("what"     := J.string)
   `JU.andMap` ("trigger"  := J.string)
   `JU.andMap` ("notes"    := J.string)

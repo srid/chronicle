@@ -79,12 +79,7 @@ CREATE TABLE feelings_dev (
 );
 
 create or replace view "1".feelings_dev as
-SELECT feelings_dev.how,
-   feelings_dev.what,
-   feelings_dev.trigger,
-   feelings_dev.notes,
-   feelings_dev.at
-  FROM feelings_dev
+SELECT *  FROM feelings_dev
  ORDER BY feelings_dev.at DESC;
 ```
 
