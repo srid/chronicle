@@ -20,11 +20,16 @@ import Chronicle.Components.Search as Search
 
 
 view : Address Controller.Action -> Model -> Html
-view address {feelings} =
+view address {feelings, editing} =
   let
     feelingGroups = groupFeelingsByDay feelings
+    editView      = FeelingEditView.view address editing
+    displayView   = div [] (List.map viewFeelingGroup feelingGroups)
   in
-    div [] (List.map viewFeelingGroup feelingGroups)
+    div [] [ editView
+           , displayView
+           ]
+
 
 viewFeelingGroup : FeelingGroup -> Html
 viewFeelingGroup (day, feelings) =

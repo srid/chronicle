@@ -29,7 +29,6 @@ viewInput address model =
     header  = text "Manage"
     content = div []
                 [ SearchView.view      address
-                , FeelingEditView.view address model.feelingEdit
                 ]
   in
     B.panel' (Just B.Primary) header content

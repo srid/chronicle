@@ -12,6 +12,11 @@ import Util.Bootstrap as B
 import Chronicle.Data.Feeling exposing (Feeling, parseHow, howValues, How(..))
 import Chronicle.Controller as Controller
 import Chronicle.Components.FeelingEdit as FeelingEdit
+import Chronicle.Components.FeelingList as FeelingList
+
+toOutterAction : FeelingEdit.Action -> Controller.Action
+toOutterAction action =
+  action |> FeelingList.FeelingEdit |> Controller.FeelingList
 
 view : Address Controller.Action -> FeelingEdit.Model -> Html
 view address {editType, formValue, error} =
@@ -22,7 +27,7 @@ view address {editType, formValue, error} =
                    , StringInput address FeelingEdit.UpdateTrigger "What triggered it?" formValue.trigger
                    , MultilineStringInput address FeelingEdit.UpdateNotes "Notes" formValue.notes
                    ]
-    msgButton = FeelingEdit.Save |> Controller.FeelingEdit
+    msgButton = FeelingEdit.Save |> toOutterAction
     buttonLabel = case editType of
       FeelingEdit.AddNew -> "Add"
       FeelingEdit.EditExisting at -> "Save " ++ toString at
@@ -66,7 +71,7 @@ input' : (List Attribute -> List Html -> Html)
       -> Html
 input' control address action currentValue placeHolder =
   let
-    msg = action >> Controller.FeelingEdit >> message address
+    msg = action >> toOutterAction >> message address
   in
     control [ class "form-control"
            , placeholder placeHolder
@@ -81,7 +86,7 @@ select' : Address Controller.Action
        -> Html
 select' address action options currentValue placeHolder =
   let
-    msg         = action >> Controller.FeelingEdit >> message address
+    msg         = action >> toOutterAction >> message address
     option' val = option [ value val
                          , selected (val == currentValue) ]
                          [ text val ]

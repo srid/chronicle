@@ -6,18 +6,17 @@ import Task exposing (Task, andThen)
 import Task
 import Http
 
+import Util.Component exposing (delegateTo)
 import Chronicle.Model exposing (Model)
 import Chronicle.Data.Feeling exposing (Feeling)
 import Chronicle.Components.Search as Search
 import Chronicle.Components.FeelingList as FeelingList
-import Chronicle.Components.FeelingEdit as FeelingEdit
 
 -- Action
 
 type Action
   = NoOp
   | Search      Search.Action
-  | FeelingEdit FeelingEdit.Action
   | FeelingList FeelingList.Action
 
 -- Update
@@ -36,19 +35,10 @@ update action model =
         (Maybe.map FeelingListRequest)
         a
         model.feelingList
-    FeelingEdit a ->
-      delegateTo
-        FeelingEdit.update
-        (\m -> { model | feelingEdit <- m })
-        (Maybe.map FeelingEditRequest)
-        a
-        model.feelingEdit
-
 -- Request
 
 type Request
   = FeelingListRequest FeelingList.Request
-  | FeelingEditRequest FeelingEdit.Request
 
 initialRequest : Request
 initialRequest = FeelingListRequest FeelingList.Reload
@@ -58,28 +48,12 @@ run r =
   case r of
     (FeelingListRequest r') ->
       Task.map FeelingList <| FeelingList.run r'
-    (FeelingEditRequest r') ->
-      FeelingEdit.run r' `andThen`
-        (always <| Task.map FeelingList <| FeelingList.run FeelingList.Reload)
 
 actions : Mailbox Action
 actions =
   mailbox NoOp
 
 -- Component utility
-
-delegateTo : (action -> model -> (model, Maybe request))
-          -> (model -> Model)
-          -> (Maybe request -> Maybe Request)
-          -> action
-          -> model
-          -> (Model, Maybe Request)
-delegateTo update' convertModel convertRequest a m =
-  let
-    (model', request') = update' a m
-  in
-    (convertModel model', convertRequest request')
-
 justModel : Model -> (Model, Maybe Request)
 justModel model =
   (model, Nothing)
