@@ -1,6 +1,21 @@
 # chronicle
 
-Chronicle allows you to form reliable memories. It keeps track of a **tree of memories** that are, ultimately, linked to the factual records which records are always recorded at the very moment they happened.
+Chronicle allows you to form reliable memories. It keeps track of a **tree of memories** that are, ultimately, linked to the factual records recorded at the very moment they happened.
+
+<!-- TOC generated using https://github.com/jonschlinkert/markdown-toc
+-->
+  * [Why do this?](#why-do-this-)
+  * [Chronicle explained in detail](#chronicle-explained-in-detail)
+  * [How is the data represented?](#how-is-the-data-represented-)
+    + [Moment](#moment)
+    + [Story](#story)
+    + [Marks](#marks)
+    + [Folds](#folds)
+  * [Tech](#tech)
+    + [Future use](#future-use)
+  * [HACKING](#hacking)
+    + [Database notes](#database-notes)
+    + [Elm package ideas](#elm-package-ideas)
 
 ## Why do this?
 
@@ -15,7 +30,7 @@ The basic idea is to keep track of a **tree of memories**. Accumulation of data 
 
 All level of summarizations are ultimately linked to the specific moments (thus forming a tree) that can be consulted at any time. We thus create reliable "memories" that are recorded at individual moments (the very moment they happened) without the bias of faulty recall.
 
-There is also the notion of "story" (yet to be implemented) which some moments can belong to. A story is thus linked to the individual moments, and can be consulted when "telling" the story later on, and with little bias.
+There is also the notion of "story" (yet to be implemented) which some moments can belong to. A story is thus linked to the individual moments, and can be consulted when "telling" (to oneself or others) the story later on, and with little bias.
 
 ## How is the data represented?
 
@@ -53,7 +68,7 @@ Each day, week, month, year are summarized as folds. Stories may have their own 
 
 The calendar view of folds will be showing these marks (usually just the default one), thus emulating what we have in the blackboard. The user can define custom marks in the Marks table and refer to them in the folds.
 
-Fold can also enable habit tracking (eg: contemplate XYZ every day; with value=o or 1, accumulating over week/month/etc).
+Fold can also enable habit tracking (eg: contemplate XYZ every day; with value=0 or 1, accumulating over week/month/etc).
 
 ## Tech
 
@@ -67,7 +82,7 @@ Fold can also enable habit tracking (eg: contemplate XYZ every day; with value=o
 
 ## HACKING
 
-Please note that chronicle is not yet read for public use.
+Please note that chronicle is not yet ready for public use.
 
 ```
 make run  # requires spas cloned and compiled in parent repo
