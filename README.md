@@ -6,7 +6,7 @@ Chronicle allows you to form reliable memories. It keeps track of a **tree of me
 -->
   * [Why do this?](#why-do-this-)
   * [Chronicle explained in detail](#chronicle-explained-in-detail)
-  * [How is the data represented?](#how-is-the-data-represented-)
+  * [How is the data represented?](#how-is-the-data-represented)
     + [Moment](#moment)
     + [Story](#story)
     + [Marks](#marks)
@@ -32,7 +32,7 @@ All level of summarizations are ultimately linked to the specific moments (thus 
 
 There is also the notion of "story" (yet to be implemented) which some moments can belong to. A story is thus linked to the individual moments, and can be consulted when "telling" (to oneself or others) the story later on, and with little bias.
 
-## How is the data represented?
+## How is the data represented
 
 Chronicle stores all of its data in PostgreSQL. There are 4 concepts (tables):
 
