@@ -1,4 +1,4 @@
--- Module for working with https://github.com/srid/spas
+-- Module for working with https://github.com/srid/spas (PostgREST)
 
 module Util.Spas where
 

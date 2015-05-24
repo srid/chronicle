@@ -1,13 +1,59 @@
 # chronicle
 
-This is v2 of [feelings](https://github.com/srid/feelings). Work in progress. Read the sections titled Motivation and WHITEBOARD to understand the idea.
+Chronicle allows you to form reliable memories. It keeps track of a **tree of memories** that are, ultimately, linked to the factual records which records are always recorded at the very moment they happened.
 
-## Motivation
+## Why do this?
 
-Humans are adept at denialism. The author therefore presumes that only a [data-centric approach](http://www.theatlantic.com/business/archive/2013/10/how-google-uses-data-to-build-a-better-worker/280347/) can be effective at improving human happiness.
+Humans are adept at denialism. The author therefore presumes that only a [data-centric approach](http://www.theatlantic.com/business/archive/2013/10/how-google-uses-data-to-build-a-better-worker/280347/) can be effective at improving human well-being and productivity.
 
-Over time of data collection, one can't help but gain insights into what *actually* causes — as opposed to what one [remembers](https://en.wikipedia.org/wiki/List_of_memory_biases) or
+Over a period of data collection, one can't help but gain insights into what *actually* causes — as opposed to what one [remembers](https://en.wikipedia.org/wiki/List_of_memory_biases) or
 is [taught](https://en.wikipedia.org/wiki/Social_conditioning) to be causing — one's happiness and unhappiness.
+
+## Chronicle explained in detail
+
+The basic idea is to keep track of a **tree of memories**. Accumulation of data occurs at the level of leaf nodes (individual moments), from which we "fold" the memories up to summarize at the ancestries. Specifically, we fold all moments of the day to summarize for that day, and then fold all days to summarize for that week, then month, year and so on.
+
+All level of summarizations are ultimately linked to the specific moments (thus forming a tree) that can be consulted at any time. We thus create reliable "memories" that are recorded at individual moments (the very moment they happened) without the bias of faulty recall.
+
+There is also the notion of "story" (yet to be implemented) which some moments can belong to. A story is thus linked to the individual moments, and can be consulted when "telling" the story later on, and with little bias.
+
+## How is the data represented?
+
+Chronicle stores all of its data in PostgreSQL. There are 4 concepts (tables):
+
+### Moment
+
+This is what the "feelings" table currently contains. It is just the individual moments recording how things were at that very moment.
+
+### Story
+
+This, as the word indicates, is a string of moments forming a "story" to be recalled (or re-told) later. Examples:
+
+* Work
+* Work at $company
+* India trip 2015
+* Chronicle development
+
+Each moment can belong to at most one story. Some stories, like "India trip 2015", are **smart stories** in that they are specified using time ranges (thus moments can't explicitly belong to them).
+
+### Marks
+
+These are analogous to the colored shapes in my blackboard (cf. Seinfeld productivity hack). The idea is to have basic (SVG?) shapes defined somewhere – in Elm, or database — and let the user specify a list of them to be rendered ultimately in the calendar view. Fields:
+
+* Shapes: list of shapes
+* Value: numeric value of this mark (used for aggregating in outter folds)
+
+### Folds
+
+Each day, week, month, year are summarized as folds. Stories may have their own folds (eg: work fold). Fields:
+
+* Summary
+* Time range
+* Marks (list of marks, as described above).
+
+The calendar view of folds will be showing these marks (usually just the default one), thus emulating what we have in the blackboard. The user can define custom marks in the Marks table and refer to them in the folds.
+
+Fold can also enable habit tracking (eg: contemplate XYZ every day; with value=o or 1, accumulating over week/month/etc).
 
 ## Tech
 
@@ -15,51 +61,19 @@ is [taught](https://en.wikipedia.org/wiki/Social_conditioning) to be causing —
 * [Elm](http://elm-lang.org/) - client-side language using FRP
 * [Bootstrap](http://getbootstrap.com/) - HTML/CSS framework
 
+### Future use
+
+* For calendar UI: http://bootstrap-calendar.azurewebsites.net/index-bs3.html
+
 ## HACKING
 
-Use Heroku Docker CLI plugin for deployment:
+Please note that chronicle is not yet read for public use.
 
 ```
-make release
-```
-
-and local build for development:
-
-```
-make run  # run spas from parent repo
+make run  # requires spas cloned and compiled in parent repo
 make compile # rebuild Elm sources
 ```
 
-## WHITEBOARD
-
-Basic idea is to keep track of a **tree of memories**. Accumulation of data occurs at the level of leaf nodes (individual moments), from which we "fold" the memories up to summarize at at ancestry. Specifically, we fold all moments of the day to summarize the value for that day, and then fold all days to summarize for that week, then month, year and so on.
-
-All level of summarizations are ultimately linked to the specific moments (thus forming a tree) that can be consulted at any time. We thus create reliable "memories" that are formed at individual moments without the bias of faulty recall.
-
-Each entries can store custom metadata for later use. All entries have common fields like "created_at" (creation time), "notes" (markdown formatted notes, the memory 'content'). Use PostgreSQL JSON type for the arbitrary metadata so we don't have to keep changing the database schema (metadata changes is to be expected in future).
-
-All entries belong to a "channel". A channel has a recommended set of metadata. The following channels are currently known:
-
-* Channel "feeling", with metadata: how, what, trigger.
-* Channel "work/<company>", with metadata: project, people, hindrance, ...
-* Channel "travel/india-trip-2015", with metadata: location, people, ...
-
-### Fold metrics
-
-When folding also *aggregate* pre-defined metrics from individual entries. This should support:
-
-* the color-coded daily markets in my blackboard
-* habit tracking (eg: contemplate XYZ every day; with count=o or 1, accumulating over week/month/etc)
-
-### Challenges
-
-* How to represent such a flexible data model (above) without writing specific model/view code in Elm? We currently do this for the 'feelings' data model. Perhaps, just separate the channel spec as directories (`src/Elm/Channels/{Base,Feeling,Work}.elm`) for now, with a 'Base' channel that can be inherited for new channels.
-
-  - Alternatively, drop the idea of channels in favour of the simplicity of having just one (feelings). Consequently make the feelings model a bit more generic (for example, rename "feeling" to "moment" and accordingly adjust its properties.)
-
-### User Interface
-
-As memories are stored as trees, it is fitting to use a "zoomable calendar". Start with calendar view, that can be zoomed in or out, with colored markers on individual cells. See http://bootstrap-calendar.azurewebsites.net/index-bs3.html
 
 ### Database notes
 
@@ -84,7 +98,7 @@ SELECT *  FROM feelings
 ```
 
 
-## Elm package ideas
+### Elm package ideas
 
 Some new packages I can create by extracing code from this repo:
 
