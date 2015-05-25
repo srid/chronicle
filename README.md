@@ -85,32 +85,38 @@ Fold can also enable habit tracking (eg: contemplate XYZ every day; with value=0
 
 Please note that chronicle is not yet ready for public use.
 
+As the first step, prepare a local postgresql database:
+
+```
+echo "CREATE database chronicle;" | psql
+psql -d chronicle < schema.sql
+
+```
+
+Then:
+
 ```
 make run  # requires spas cloned and compiled in parent repo
-make compile # rebuild Elm sources
+make compile # rebuild Elm sources whenever they change
 ```
 
 
 ### Database notes
 
-Use `\d+ 1.feelings` to inspect the view.
+Full schema available in schema.sql. Use `\d+ 1.feelings` to inspect the view.
 
 Use `ALTER ROLE <username> SET timezone = 'America/Vancouver';` to set database timezone. This however doesn't automatically change the day end marker from 12am to something custom (like 3am).
 
-TODO: dump schema into git repo.
+To retrieve schema from Heroku Postgres:
 
 ```
-CREATE TABLE feelings_dev (
-    how feelingkind DEFAULT 'meh'::feelingkind NOT NULL,
-    what text,
-    trigger text,
-    notes text,
-    at timestamp with time zone DEFAULT now() NOT NULL
-);
+heroku pg:backups capture
+curl -o latest.dump `heroku pg:backups public-url -a <appname>`
 
-create or replace view "1".feelings as
-SELECT *  FROM feelings
- ORDER BY feelings.at DESC;
+pg_restore --verbose --clean --no-acl --no-owner -h localhost -U srid -d chronicle latest.dump
+rm latest.dump
+pg_dump -s chronicle > schema.sql
+vim schema.sql  # remove odd looking definitions
 ```
 
 
