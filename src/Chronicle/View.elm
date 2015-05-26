@@ -7,8 +7,8 @@ import Util.Bootstrap as B
 import Chronicle.Model as Model
 import Chronicle.Controller as Controller
 import Chronicle.Components.SearchView as SearchView
-import Chronicle.Components.FeelingListGroupedView as FeelingListGroupedView
-import Chronicle.Components.FeelingEditView as FeelingEditView
+import Chronicle.Components.MomentListGroupedView as MomentListGroupedView
+import Chronicle.Components.MomentEditView as MomentEditView
 
 
 view : Address Controller.Action -> Model.Model -> Html
@@ -19,7 +19,7 @@ view address model =
     B.fluidContainer
     [ B.pageHeader ["table-" ++ model.tableName] <| "Chronicle : " ++ model.tableName
     , viewInput address model
-    , FeelingListGroupedView.view address model'.feelingList
+    , MomentListGroupedView.view address model'.momentList
     ]
 
 

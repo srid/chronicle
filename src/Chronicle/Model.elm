@@ -1,35 +1,35 @@
 module Chronicle.Model where
 
 import Chronicle.Database exposing (tableName)
-import Chronicle.Data.Feeling as Feeling
+import Chronicle.Data.Moment as Moment
 import Chronicle.Components.Search as Search
-import Chronicle.Components.FeelingList as FeelingList
-import Chronicle.Components.FeelingEdit as FeelingEdit
+import Chronicle.Components.MomentList as MomentList
+import Chronicle.Components.MomentEdit as MomentEdit
 
 type alias Model =
   { tableName   : String
   , demoMode    : Bool
   , search      : Search.Model
-  , feelingEdit : FeelingEdit.Model
-  , feelingList : FeelingList.Model
+  , momentEdit : MomentEdit.Model
+  , momentList : MomentList.Model
   }
 
 initialModel : Model
 initialModel = { tableName   = tableName
                , demoMode    = False -- TODO: expose this to View
                , search      = Search.initialModel
-               , feelingEdit = FeelingEdit.initialModel
-               , feelingList = FeelingList.initialModel
+               , momentEdit = MomentEdit.initialModel
+               , momentList = MomentList.initialModel
                }
 
 -- transform model based on its info before view rendering
 transformModel : Model -> Model
 transformModel model =
   let
-    feelings'    = model.feelingList |> .feelings
-      |> Search.search model.search Feeling.feelingToString
-      |> List.map (if model.demoMode then Feeling.mangle else (\x -> x))
-    feelingList  = model.feelingList
-    feelingList' = { feelingList | feelings <- feelings' }
+    moments'    = model.momentList |> .moments
+      |> Search.search model.search Moment.momentToString
+      |> List.map (if model.demoMode then Moment.mangle else (\x -> x))
+    momentList  = model.momentList
+    momentList' = { momentList | moments <- moments' }
   in
-    { model | feelingList <- feelingList' }
+    { model | momentList <- momentList' }

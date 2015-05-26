@@ -1,4 +1,4 @@
-module Chronicle.Components.FeelingList where
+module Chronicle.Components.MomentList where
 
 import Json.Decode  as J
 import Task
@@ -8,50 +8,50 @@ import Date
 
 import Util.Component exposing (delegateTo)
 import Chronicle.Database as Database
-import Chronicle.Data.Feeling exposing (Feeling, decodeFeeling)
-import Chronicle.Components.FeelingEdit as FeelingEdit
+import Chronicle.Data.Moment exposing (Moment, decodeMoment)
+import Chronicle.Components.MomentEdit as MomentEdit
 
 type alias Model =
-  { feelings : List Feeling
-  , editing  : FeelingEdit.Model
+  { moments : List Moment
+  , editing  : MomentEdit.Model
   }
 
 -- Actions
 
 type Action
-  = Initialize (List Feeling)
-  | Add Feeling
+  = Initialize (List Moment)
+  | Add Moment
   | ReloadAll
-  | FeelingEdit FeelingEdit.Action
+  | MomentEdit MomentEdit.Action
 
 -- Update
 
 update : Action -> Model -> (Model, Maybe Request)
 update action model =
   case action of
-    Initialize feelings ->
-      ({ initialModel | feelings <- feelings }, Nothing)
-    Add feeling ->
-      ({ model | feelings <- feeling :: model.feelings }, Nothing)
+    Initialize moments ->
+      ({ initialModel | moments <- moments }, Nothing)
+    Add moment ->
+      ({ model | moments <- moment :: model.moments }, Nothing)
     ReloadAll ->
       (model, Just Reload)
-    FeelingEdit a ->
+    MomentEdit a ->
       delegateTo
-        FeelingEdit.update
+        MomentEdit.update
         (\m -> { model | editing <- m })
-        (Maybe.map FeelingEditRequest)
+        (Maybe.map MomentEditRequest)
         a
         model.editing
 
 
 initialModel : Model
-initialModel = { feelings=[], editing=FeelingEdit.initialModel }
+initialModel = { moments=[], editing=MomentEdit.initialModel }
 
 -- Request
 
 type Request
   = Reload
-  | FeelingEditRequest FeelingEdit.Request
+  | MomentEditRequest MomentEdit.Request
 
 initialRequest : Request
 initialRequest = Reload
@@ -61,6 +61,6 @@ run r =
   case r of
     Reload ->
       Task.map Initialize Database.select
-    (FeelingEditRequest r') ->
-      FeelingEdit.run r' `andThen`
+    (MomentEditRequest r') ->
+      MomentEdit.run r' `andThen`
         (always <| run Reload)

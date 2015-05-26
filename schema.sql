@@ -1,4 +1,4 @@
-CREATE TYPE feelingkind AS ENUM (
+CREATE TYPE momentkind AS ENUM (
     'good',
     'meh',
     'bad',
@@ -7,8 +7,8 @@ CREATE TYPE feelingkind AS ENUM (
 );
 
 
-CREATE TABLE feelings (
-    how feelingkind DEFAULT 'meh'::feelingkind NOT NULL,
+CREATE TABLE moments (
+    how momentkind DEFAULT 'meh'::momentkind NOT NULL,
     what text,
     trigger text,
     notes text,
@@ -20,12 +20,12 @@ CREATE TABLE feelings (
 
 CREATE SCHEMA "1";
 
-CREATE VIEW "1".feelings AS
- SELECT feelings.how,
-    feelings.what,
-    feelings.trigger,
-    feelings.notes,
-    feelings.at,
-    feelings.id
-   FROM public.feelings
-  ORDER BY feelings.at DESC;
+CREATE VIEW "1".moments AS
+ SELECT moments.how,
+    moments.what,
+    moments.trigger,
+    moments.notes,
+    moments.at,
+    moments.id
+   FROM public.moments
+  ORDER BY moments.at DESC;

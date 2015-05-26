@@ -8,16 +8,16 @@ import Http
 
 import Util.Component exposing (delegateTo)
 import Chronicle.Model exposing (Model)
-import Chronicle.Data.Feeling exposing (Feeling)
+import Chronicle.Data.Moment exposing (Moment)
 import Chronicle.Components.Search as Search
-import Chronicle.Components.FeelingList as FeelingList
+import Chronicle.Components.MomentList as MomentList
 
 -- Action
 
 type Action
   = NoOp
   | Search      Search.Action
-  | FeelingList FeelingList.Action
+  | MomentList MomentList.Action
 
 -- Update
 
@@ -28,26 +28,26 @@ update action model =
       justModel model
     Search a ->
       justModel { model | search <- (Search.update a model.search) }
-    FeelingList a ->
+    MomentList a ->
       delegateTo
-        FeelingList.update
-        (\m -> { model | feelingList <- m })
-        (Maybe.map FeelingListRequest)
+        MomentList.update
+        (\m -> { model | momentList <- m })
+        (Maybe.map MomentListRequest)
         a
-        model.feelingList
+        model.momentList
 -- Request
 
 type Request
-  = FeelingListRequest FeelingList.Request
+  = MomentListRequest MomentList.Request
 
 initialRequest : Request
-initialRequest = FeelingListRequest FeelingList.Reload
+initialRequest = MomentListRequest MomentList.Reload
 
 run : Request -> Task Http.Error Action
 run r =
   case r of
-    (FeelingListRequest r') ->
-      Task.map FeelingList <| FeelingList.run r'
+    (MomentListRequest r') ->
+      Task.map MomentList <| MomentList.run r'
 
 actions : Mailbox Action
 actions =
