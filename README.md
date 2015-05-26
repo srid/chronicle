@@ -90,6 +90,8 @@ As the first step, prepare a local postgresql database:
 ```
 echo "CREATE database chronicle;" | psql
 psql -d chronicle < schema.sql
+# Optionally load production dump from Heroku (see below) as:
+pg_restore -d chronicle -a -t feelings latest.dump
 
 ```
 
@@ -118,7 +120,6 @@ rm latest.dump
 pg_dump -s chronicle > schema.sql
 vim schema.sql  # remove odd looking definitions
 ```
-
 
 ### Elm package ideas
 
