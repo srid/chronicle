@@ -9,24 +9,32 @@ import Result exposing (toMaybe)
 import Date
 import Http
 import Focus
-import Focus exposing ((=>))
+import Focus exposing (Focus, (=>))
 
 import Chronicle.Database as Database
 import Chronicle.Data.Moment exposing (Moment, How, parseHow)
 import Chronicle.Data.Moment as Moment
 
-type alias Model =
-  { editType : EditType
-  , formValue : Moment
-  , error : String  -- Idealy this should be a Map from field to error
+type alias InnerModel =
+  { formValue : Moment
+  , error : String  -- Not used
   }
 
-type EditType
-    = AddNew
-    | EditExisting Int
+type Model
+    = Adding InnerModel
+    | Modifying (Maybe InnerModel)
+
+setField : Model -> Focus InnerModel field -> field -> Model
+setField model focus field =
+  let
+    set m = Focus.set focus field m
+  in
+    case model of
+      (Adding im)           -> Adding <| set im
+      (Modifying (Just im)) -> Modifying <| Just <| set im
 
 initialModel : Model
-initialModel = { editType=AddNew, formValue=Moment.default, error="" }
+initialModel = Adding { formValue=Moment.default, error="" }
 
 -- Actions
 
@@ -44,25 +52,22 @@ update : Action -> Model -> (Model, Maybe Request)
 update action model =
   case action of
     Save ->
-      case model.editType of
-        AddNew          ->
-          (initialModel, Just <| PostgrestInsert model.formValue)
-        EditExisting id ->
-          (initialModel, Just <| PostgrestUpdate model.formValue id)
+      case model of
+        (Adding im)     ->
+          (initialModel, Just <| PostgrestInsert im.formValue)
+        (Modifying (Just im))  ->
+          (Modifying Nothing, Just <| PostgrestUpdate im.formValue im.formValue.id)
     EditThis moment ->
-      justModel <| { initialModel | editType <- EditExisting moment.id
-                                  , formValue <- moment
-                                  }
+      justModel <| Modifying <| Just { formValue=moment, error="" }
     UpdateHow howString ->
       case parseHow howString |> toMaybe of
-        Nothing  -> justModel <| { model | error <- "Invalid value for how" }
-        Just h   -> justModel <| Focus.set (formValue => how) h model
+        Just h   -> justModel <| setField model (formValue => how) h
     UpdateWhat w ->
-      justModel <| Focus.set (formValue => what) w model
+      justModel <| setField model (formValue => what) w
     UpdateTrigger t ->
-      justModel <| Focus.set (formValue => trigger) t model
+      justModel <| setField model (formValue => trigger) t
     UpdateNotes t ->
-      justModel <| Focus.set (formValue => notes) t model
+      justModel <| setField model (formValue => notes) t
 
 formValue = Focus.create .formValue (\f r -> { r | formValue <- f r.formValue })
 how       = Focus.create .how       (\f r -> { r | how       <- f r.how })

@@ -31,8 +31,7 @@ view address {moments, editing} =
     editView      = MomentEditView.view address toAction editing
     displayView   = div [] <| List.map (viewMomentGroup address) momentGroups
   in
-    div [] [ editView
-           , displayView
+    div [] [ displayView
            ]
 
 
