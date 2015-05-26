@@ -27,7 +27,7 @@ contextClassSuffix c' =
 classFor : Maybe Context -> String -> Attribute
 classFor ctx prefix =
   classList [ (prefix, True)
-            , (prefix ++ contextClassSuffix ctx, True)
+            , (prefix ++ "-" ++ contextClassSuffix ctx, True)
             ]
 
 panel : Html -> Html -> Html

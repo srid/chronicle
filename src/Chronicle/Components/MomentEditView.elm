@@ -58,6 +58,9 @@ viewButtons address toAction editModel =
         [ B.button (Just B.Primary)
                    label
                    [ HE.onClick address (toAction MomentEdit.Save) ]
+        , B.button Nothing
+                   "Cancel"
+                   [ HE.onClick address (toAction MomentEdit.Cancel) ]
         ]
 
 

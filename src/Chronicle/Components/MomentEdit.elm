@@ -44,6 +44,7 @@ type Action
   | UpdateTrigger String
   | UpdateNotes String
   | Save
+  | Cancel
   | EditThis Moment
 
 -- Update
@@ -51,6 +52,10 @@ type Action
 update : Action -> Model -> (Model, Maybe Request)
 update action model =
   case action of
+    Cancel ->
+      case model of
+        (Modifying (Just _)) ->
+          justModel <| Modifying Nothing
     Save ->
       case model of
         (Adding im)     ->
