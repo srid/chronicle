@@ -39,7 +39,7 @@ Chronicle stores all of its data in PostgreSQL. There are 4 concepts (tables):
 
 ### Moment
 
-This is what the "feelings" table currently contains. It is just the individual moments recording how things were at that very moment.
+This is what the user records (nothing else); it represents how things were going at that very moment (only) involving no recall or reverie.
 
 ### Story
 
@@ -91,7 +91,7 @@ As the first step, prepare a local postgresql database:
 echo "CREATE database chronicle;" | psql
 psql -d chronicle < schema.sql
 # Optionally load production dump from Heroku (see below) as:
-pg_restore -d chronicle -a -t feelings latest.dump
+pg_restore -d chronicle -a -t moments latest.dump
 
 ```
 
@@ -105,7 +105,7 @@ make compile # rebuild Elm sources whenever they change
 
 ### Database notes
 
-Full schema available in schema.sql. Use `\d+ 1.feelings` to inspect the view.
+Full schema available in schema.sql. Use `\d+ 1.moments` to inspect the view.
 
 Use `ALTER ROLE <username> SET timezone = 'America/Vancouver';` to set database timezone. This however doesn't automatically change the day end marker from 12am to something custom (like 3am).
 
