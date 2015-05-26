@@ -46,17 +46,18 @@ viewButtons : Address Controller.Action
 viewButtons address toAction editModel =
   case editModel of
     (MomentEdit.Adding _) ->
-      [ button [ class "btn btn-primary"
-               , HE.onClick address (toAction MomentEdit.Save) ] [ text "Add" ]
+      [ B.button (Just B.Primary)
+                 "Add"
+                 [ HE.onClick address (toAction MomentEdit.Save) ]
       ]
     (MomentEdit.Modifying (Just im)) ->
       let
         moment = im.formValue
         label  = "Save " ++ (toString moment.id)
       in
-        [ button [ class "btn btn-primary"
-                 , HE.onClick address (toAction MomentEdit.Save) ]
-                 [ text label ]
+        [ B.button (Just B.Primary)
+                   label
+                   [ HE.onClick address (toAction MomentEdit.Save) ]
         ]
 
 
