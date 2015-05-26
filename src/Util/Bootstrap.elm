@@ -5,6 +5,7 @@ module Util.Bootstrap where
 
 import String
 
+import Html as H
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as HE
@@ -22,6 +23,12 @@ contextClassSuffix c' =
   case c' of
     Nothing -> "default"
     Just c  -> String.toLower <| toString c
+
+classFor : Maybe Context -> String -> Attribute
+classFor ctx prefix =
+  classList [ (prefix, True)
+            , (prefix ++ "-" ++ contextClassSuffix ctx, True)
+            ]
 
 panel : Html -> Html -> Html
 panel = panel' Nothing
@@ -51,6 +58,15 @@ fluidContainer : List Html -> Html
 fluidContainer children =
   div [ class "container-fluid" ] children
 
+button : Maybe Context -> String -> List Attribute -> Html
+button ctx label attributes =
+  H.button (classFor ctx "btn" :: attribute "type" "button" :: attributes)
+           [ text label ]
+
+buttonGroup : String -> List Html -> Html
+buttonGroup role buttons =
+  div [ class "btn-group"
+      , attribute "role" role] buttons
 
 -- Utility
 

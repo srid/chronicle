@@ -13,6 +13,7 @@ import Util.Bootstrap as B
 import Chronicle.Model as Model
 import Chronicle.Data.Moment exposing (Moment, How(..))
 import Chronicle.Controller as Controller
+import Chronicle.Components.MomentEditView as MomentEditView
 
 
 view : Address Controller.Action
@@ -21,7 +22,7 @@ view : Address Controller.Action
     -> Html
 view address toAction moment =
   li [ class "list-group-item list-group-item-" ]
-     [ a [ HE.onClick address (toAction moment) ] [ text "e" ]
+     [ viewEditButton address toAction moment
      , text " "
      , viewMomentAt moment.at
      , text " "
@@ -29,6 +30,15 @@ view address toAction moment =
      , viewMomentTrigger moment.trigger
      , Markdown.toHtml moment.notes
      ]
+
+viewEditButton : Address Controller.Action
+              -> (Moment -> Controller.Action)
+              -> Moment
+              -> Html
+viewEditButton address toAction moment =
+  button [ class "btn btn-default btn-xs"
+         , HE.onClick address (toAction moment) ]
+         [ text "e" ]
 
 -- TODO: Write a general date formatter elm package.
 viewMomentAt : Date.Date -> Html

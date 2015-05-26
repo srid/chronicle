@@ -7,10 +7,10 @@ import Chronicle.Components.MomentList as MomentList
 import Chronicle.Components.MomentEdit as MomentEdit
 
 type alias Model =
-  { tableName   : String
-  , demoMode    : Bool
-  , search      : Search.Model
-  , momentEdit : MomentEdit.Model
+  { tableName  : String
+  , demoMode   : Bool
+  , search     : Search.Model
+  , addMoment  : MomentEdit.Model
   , momentList : MomentList.Model
   }
 
@@ -18,8 +18,8 @@ initialModel : Model
 initialModel = { tableName   = tableName
                , demoMode    = False -- TODO: expose this to View
                , search      = Search.initialModel
-               , momentEdit = MomentEdit.initialModel
-               , momentList = MomentList.initialModel
+               , addMoment   = MomentEdit.initialModel
+               , momentList  = MomentList.initialModel
                }
 
 -- transform model based on its info before view rendering

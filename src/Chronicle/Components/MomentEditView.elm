@@ -17,8 +17,11 @@ view : Address Controller.Action
     -> (MomentEdit.Action -> Controller.Action)
     -> MomentEdit.Model
     -> Html
-view address toAction {editType, formValue, error} =
+view address toAction editModel =
   let
+    formValue    = case editModel of
+                    (MomentEdit.Adding im)           -> im.formValue
+                    (MomentEdit.Modifying (Just im)) -> im.formValue
     howOptions   = List.map toString howValues
     formElements = [ SelectInput address (toAction << MomentEdit.UpdateHow) howOptions "How am I moment?" (toString formValue.how)
                    , StringInput address (toAction << MomentEdit.UpdateWhat) "What is the moment?" formValue.what
@@ -26,21 +29,40 @@ view address toAction {editType, formValue, error} =
                    , MultilineStringInput address (toAction << MomentEdit.UpdateNotes) "Notes" formValue.notes
                    ]
     msgButton = toAction MomentEdit.Save
-    buttonLabel = case editType of
-      MomentEdit.AddNew -> "Add"
-      MomentEdit.EditExisting at -> "Save " ++ toString at
+    buttonLabel = case editModel of
+      (MomentEdit.Adding _)    -> "Add"
+      (MomentEdit.Modifying _) -> "Save " ++ toString formValue.id
   in
     div [ class "form-group" ]
     ((List.map viewFormInput formElements) ++
-     [ viewFormError error
-     , button [ class "btn btn-primary"
-              , HE.onClick address msgButton ] [ text buttonLabel ]
-     ]
+     [viewButtons address toAction editModel]
     )
 
-viewFormError : String -> Html
-viewFormError error =
-  div [ style [("color",  "red")] ] [ text error ]
+
+viewButtons : Address Controller.Action
+          -> (MomentEdit.Action -> Controller.Action)
+          -> MomentEdit.Model
+          -> Html
+viewButtons address toAction editModel =
+  case editModel of
+    (MomentEdit.Adding _) ->
+      B.button (Just B.Primary)
+               "Add"
+              [ HE.onClick address (toAction MomentEdit.Save) ]
+    (MomentEdit.Modifying (Just im)) ->
+      let
+        moment = im.formValue
+        label  = "Save " ++ (toString moment.id)
+      in
+        B.buttonGroup "group"
+          [ B.button (Just B.Primary)
+                     label
+                     [ HE.onClick address (toAction MomentEdit.Save) ]
+          , B.button Nothing
+                     "Cancel"
+                     [ HE.onClick address (toAction MomentEdit.Cancel) ]
+          ]
+
 
 -- Form abstraction
 

@@ -23,21 +23,26 @@ import Chronicle.Components.MomentEditView as MomentEditView
 import Chronicle.Components.Search as Search
 
 
+editFieldAction : MomentEdit.Action -> Controller.Action
+editFieldAction = MomentList.MomentEdit >> Controller.MomentList
+
+editTriggerAction : Moment -> Controller.Action
+editTriggerAction = MomentEdit.EditThis >> MomentList.MomentEdit >> Controller.MomentList
+
 view : Address Controller.Action -> Model -> Html
 view address {moments, editing} =
   let
     momentGroups = groupMomentsByDay moments
     toAction      = MomentList.MomentEdit >> Controller.MomentList
-    editView      = MomentEditView.view address toAction editing
-    displayView   = div [] <| List.map (viewMomentGroup address) momentGroups
+    -- editView      = MomentEditView.view address toAction editing
+    displayView   = div [] <| List.map (viewMomentGroup address editing) momentGroups
   in
-    div [] [ editView
-           , displayView
+    div [] [ displayView
            ]
 
 
-viewMomentGroup : Address Controller.Action -> MomentGroup -> Html
-viewMomentGroup address (day, moments) =
+viewMomentGroup : Address Controller.Action -> MomentEdit.Model -> MomentGroup -> Html
+viewMomentGroup address editing (day, moments) =
   let
     -- FIXME: dayHow and badge must be calculated against unfiltered list
     --        of moments on this day.
@@ -47,8 +52,21 @@ viewMomentGroup address (day, moments) =
               [ text day
               , span [ class "badge" ] [ text badge ]
               ]
-    toAction = MomentEdit.EditThis >> MomentList.MomentEdit >> Controller.MomentList
+    viewMoment moment =
+      case editingThis editing moment of
+        -- Display a form to edit this moment
+        True  -> MomentEditView.view address editFieldAction editing
+        -- Just display the moment
+        False -> MomentView.view     address editTriggerAction moment
     content = ul [ class "list-group" ]
-              (List.map (MomentView.view address toAction) moments)
+              (List.map viewMoment moments)
   in
     B.panel' dayHow header content
+
+editingThis : MomentEdit.Model -> Moment -> Bool
+editingThis editing moment =
+  case editing of
+    (MomentEdit.Modifying (Just {formValue}))
+      -> formValue.id == moment.id
+    otherwise
+      -> False
