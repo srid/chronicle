@@ -1,4 +1,4 @@
-module Chronicle.Data.Feeling where
+module Chronicle.Data.Moment where
 
 import Date
 import String
@@ -11,7 +11,7 @@ import Util.Json as JU
 import Util.Text exposing (mangleText)
 
 
-type alias Feeling =
+type alias Moment =
   { id      : Int
   , how     : How
   , what    : String
@@ -33,7 +33,7 @@ isFelicitous how =
     Good        -> True
     otherwise   -> False
 
-default : Feeling
+default : Moment
 default = { id = 0
           , how = Good
           , what = ""
@@ -42,12 +42,12 @@ default = { id = 0
           , at = Date.fromTime 0
           }
 
-feelingToString : Feeling -> String
-feelingToString feeling =
-  String.join " " <| List.map (\f -> f feeling)
+momentToString : Moment -> String
+momentToString moment =
+  String.join " " <| List.map (\f -> f moment)
     [ toString << .how
     , .what
-    , (\_ -> if feeling.trigger == "" then "" else "<-") -- To list all entries with trigger set
+    , (\_ -> if moment.trigger == "" then "" else "<-") -- To list all entries with trigger set
     , .trigger
     , .notes ]
 
@@ -60,7 +60,7 @@ mangleWhitelist =
   , "good"
   , "enjoy"
   , "out"
-  , "feeling"
+  , "moment"
   , "relaxed"
   , "coffee"
   , "hackmode"
@@ -74,17 +74,17 @@ mangleWhitelist =
   , "appreciation"
   ]
 
-mangle : Feeling -> Feeling
-mangle feeling =
+mangle : Moment -> Moment
+mangle moment =
   let
     f = mangleText mangleWhitelist
   in
-    { id      = feeling.id
-    , how     = feeling.how
-    , what    = f feeling.what
-    , trigger = f feeling.trigger
-    , notes   = f feeling.notes
-    , at      = feeling.at
+    { id      = moment.id
+    , how     = moment.how
+    , what    = f moment.what
+    , trigger = f moment.trigger
+    , notes   = f moment.notes
+    , at      = moment.at
     }
 
 -- JSON decoders
@@ -103,8 +103,8 @@ decodeHow : J.Decoder How
 decodeHow =
   J.customDecoder J.string parseHow
 
-decodeFeeling : J.Decoder Feeling
-decodeFeeling = Feeling
+decodeMoment : J.Decoder Moment
+decodeMoment = Moment
   `J.map`     ("id"       := J.int)
   `JU.andMap` ("how"      := decodeHow)
   `JU.andMap` ("what"     := J.string)
@@ -112,19 +112,19 @@ decodeFeeling = Feeling
   `JU.andMap` ("notes"    := J.string)
   `JU.andMap` ("at"       := decodeDate)
 
-decodeFeelingList : J.Decoder (List Feeling)
-decodeFeelingList = J.list decodeFeeling
+decodeMomentList : J.Decoder (List Moment)
+decodeMomentList = J.list decodeMoment
 
 
 decodeDate : J.Decoder (Date.Date)
 decodeDate = J.customDecoder J.string Date.fromString
 
-encodeWithoutAt : Feeling -> String
-encodeWithoutAt feeling =
-  [ ("how", (toString >> String.toLower >> JE.string) feeling.how)
-  , ("what", JE.string feeling.what)
-  , ("trigger", JE.string feeling.trigger)
-  , ("notes", JE.string feeling.notes)
+encodeWithoutAt : Moment -> String
+encodeWithoutAt moment =
+  [ ("how", (toString >> String.toLower >> JE.string) moment.how)
+  , ("what", JE.string moment.what)
+  , ("trigger", JE.string moment.trigger)
+  , ("notes", JE.string moment.notes)
   -- Ignore 'at' and let the database use the now time.
   -- XXX: however, don't do this when editing existing fields.
   ]

@@ -1,4 +1,4 @@
-module Chronicle.Components.FeelingEditView where
+module Chronicle.Components.MomentEditView where
 
 import Result exposing (toMaybe)
 import Maybe exposing (withDefault)
@@ -9,28 +9,28 @@ import Html.Attributes exposing (..)
 import Html.Events as HE
 
 import Util.Bootstrap as B
-import Chronicle.Data.Feeling exposing (Feeling, parseHow, howValues, How(..))
+import Chronicle.Data.Moment exposing (Moment, parseHow, howValues, How(..))
 import Chronicle.Controller as Controller
-import Chronicle.Components.FeelingEdit as FeelingEdit
-import Chronicle.Components.FeelingList as FeelingList
+import Chronicle.Components.MomentEdit as MomentEdit
+import Chronicle.Components.MomentList as MomentList
 
-toOutterAction : FeelingEdit.Action -> Controller.Action
+toOutterAction : MomentEdit.Action -> Controller.Action
 toOutterAction action =
-  action |> FeelingList.FeelingEdit |> Controller.FeelingList
+  action |> MomentList.MomentEdit |> Controller.MomentList
 
-view : Address Controller.Action -> FeelingEdit.Model -> Html
+view : Address Controller.Action -> MomentEdit.Model -> Html
 view address {editType, formValue, error} =
   let
     howOptions   = List.map toString howValues
-    formElements = [ SelectInput address FeelingEdit.UpdateHow howOptions "How am I feeling?" (toString formValue.how)
-                   , StringInput address FeelingEdit.UpdateWhat "What is the feeling?" formValue.what
-                   , StringInput address FeelingEdit.UpdateTrigger "What triggered it?" formValue.trigger
-                   , MultilineStringInput address FeelingEdit.UpdateNotes "Notes" formValue.notes
+    formElements = [ SelectInput address MomentEdit.UpdateHow howOptions "How am I moment?" (toString formValue.how)
+                   , StringInput address MomentEdit.UpdateWhat "What is the moment?" formValue.what
+                   , StringInput address MomentEdit.UpdateTrigger "What triggered it?" formValue.trigger
+                   , MultilineStringInput address MomentEdit.UpdateNotes "Notes" formValue.notes
                    ]
-    msgButton = FeelingEdit.Save |> toOutterAction
+    msgButton = MomentEdit.Save |> toOutterAction
     buttonLabel = case editType of
-      FeelingEdit.AddNew -> "Add"
-      FeelingEdit.EditExisting at -> "Save " ++ toString at
+      MomentEdit.AddNew -> "Add"
+      MomentEdit.EditExisting at -> "Save " ++ toString at
   in
     div [ class "form-group" ]
     ((List.map viewFormInput formElements) ++
@@ -47,9 +47,9 @@ viewFormError error =
 -- Form abstraction
 
 type FormInput
-  = StringInput (Address Controller.Action) (String -> FeelingEdit.Action) String String
-  | MultilineStringInput (Address Controller.Action) (String -> FeelingEdit.Action) String String
-  | SelectInput (Address Controller.Action) (String -> FeelingEdit.Action) (List String) String String
+  = StringInput (Address Controller.Action) (String -> MomentEdit.Action) String String
+  | MultilineStringInput (Address Controller.Action) (String -> MomentEdit.Action) String String
+  | SelectInput (Address Controller.Action) (String -> MomentEdit.Action) (List String) String String
 
 viewFormInput : FormInput -> Html
 viewFormInput fi =
@@ -63,7 +63,7 @@ viewFormInput fi =
 
 input' : (List Attribute -> List Html -> Html)
       -> Address Controller.Action
-      -> (String -> FeelingEdit.Action)
+      -> (String -> MomentEdit.Action)
       -> String
       -> String
       -> Html
@@ -77,7 +77,7 @@ input' control address action currentValue placeHolder =
            , HE.on "change" HE.targetValue msg] []
 
 select' : Address Controller.Action
-       -> (String -> FeelingEdit.Action)
+       -> (String -> MomentEdit.Action)
        -> List String
        -> String
        -> String

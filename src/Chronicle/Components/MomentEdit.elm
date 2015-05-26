@@ -1,4 +1,4 @@
-module Chronicle.Components.FeelingEdit where
+module Chronicle.Components.MomentEdit where
 
 import Date
 import Task
@@ -12,12 +12,12 @@ import Focus
 import Focus exposing ((=>))
 
 import Chronicle.Database as Database
-import Chronicle.Data.Feeling exposing (Feeling, How, parseHow)
-import Chronicle.Data.Feeling as Feeling
+import Chronicle.Data.Moment exposing (Moment, How, parseHow)
+import Chronicle.Data.Moment as Moment
 
 type alias Model =
   { editType : EditType
-  , formValue : Feeling
+  , formValue : Moment
   , error : String  -- Idealy this should be a Map from field to error
   }
 
@@ -26,7 +26,7 @@ type EditType
     | EditExisting Int
 
 initialModel : Model
-initialModel = { editType=AddNew, formValue=Feeling.default, error="" }
+initialModel = { editType=AddNew, formValue=Moment.default, error="" }
 
 -- Actions
 
@@ -36,7 +36,7 @@ type Action
   | UpdateTrigger String
   | UpdateNotes String
   | Save
-  | EditThis Feeling
+  | EditThis Moment
 
 -- Update
 
@@ -49,9 +49,9 @@ update action model =
           (initialModel, Just <| PostgrestInsert model.formValue)
         EditExisting id ->
           (initialModel, Just <| PostgrestUpdate model.formValue id)
-    EditThis feeling ->
-      justModel <| { initialModel | editType <- EditExisting feeling.id
-                                  , formValue <- feeling
+    EditThis moment ->
+      justModel <| { initialModel | editType <- EditExisting moment.id
+                                  , formValue <- moment
                                   }
     UpdateHow howString ->
       case parseHow howString |> toMaybe of
@@ -77,15 +77,15 @@ justModel model =
 -- Request
 
 type Request
-  = PostgrestInsert Feeling
-  | PostgrestUpdate Feeling Int
+  = PostgrestInsert Moment
+  | PostgrestUpdate Moment Int
 
 -- Tasks
 
 run : Request -> Task Http.Error String
 run r =
   case r of
-    PostgrestInsert feeling ->
-      Database.insert feeling
-    PostgrestUpdate feeling id ->
-      Database.update feeling id
+    PostgrestInsert moment ->
+      Database.insert moment
+    PostgrestUpdate moment id ->
+      Database.update moment id

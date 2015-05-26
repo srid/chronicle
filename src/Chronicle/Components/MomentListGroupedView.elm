@@ -1,4 +1,4 @@
-module Chronicle.Components.FeelingListGroupedView where
+module Chronicle.Components.MomentListGroupedView where
 
 import String exposing (toLower)
 import Signal exposing (Address)
@@ -12,65 +12,65 @@ import Html.Events as HE
 import Util.List as List2
 import Util.Bootstrap as B
 import Chronicle.Model as Model
-import Chronicle.Data.Feeling exposing (Feeling, How(..))
-import Chronicle.Data.FeelingGroup exposing (FeelingGroup, groupFeelingsByDay, howAggregate)
+import Chronicle.Data.Moment exposing (Moment, How(..))
+import Chronicle.Data.MomentGroup exposing (MomentGroup, groupMomentsByDay, howAggregate)
 import Chronicle.Controller as Controller
-import Chronicle.Components.FeelingList exposing (Model)
-import Chronicle.Components.FeelingList as FeelingList
-import Chronicle.Components.FeelingEdit as FeelingEdit
-import Chronicle.Components.FeelingEditView as FeelingEditView
+import Chronicle.Components.MomentList exposing (Model)
+import Chronicle.Components.MomentList as MomentList
+import Chronicle.Components.MomentEdit as MomentEdit
+import Chronicle.Components.MomentEditView as MomentEditView
 import Chronicle.Components.Search as Search
 
 
 view : Address Controller.Action -> Model -> Html
-view address {feelings, editing} =
+view address {moments, editing} =
   let
-    feelingGroups = groupFeelingsByDay feelings
-    editView      = FeelingEditView.view address editing
-    displayView   = div [] <| List.map (viewFeelingGroup address) feelingGroups
+    momentGroups = groupMomentsByDay moments
+    editView      = MomentEditView.view address editing
+    displayView   = div [] <| List.map (viewMomentGroup address) momentGroups
   in
     div [] [ editView
            , displayView
            ]
 
 
-viewFeelingGroup : Address Controller.Action -> FeelingGroup -> Html
-viewFeelingGroup address (day, feelings) =
+viewMomentGroup : Address Controller.Action -> MomentGroup -> Html
+viewMomentGroup address (day, moments) =
   let
     -- FIXME: dayHow and badge must be calculated against unfiltered list
-    --        of feelings on this day.
-    dayHow  = howAggregate feelings |> bootstrapContextForHow
-    badge   = List.length feelings |> toString
+    --        of moments on this day.
+    dayHow  = howAggregate moments |> bootstrapContextForHow
+    badge   = List.length moments |> toString
     header  = div []
               [ text day
               , span [ class "badge" ] [ text badge ]
               ]
     content = ul [ class "list-group" ]
-              (List.map (viewFeeling address) feelings)
+              (List.map (viewMoment address) moments)
   in
     B.panel' dayHow header content
 
-viewFeeling :  Address Controller.Action -> Feeling -> Html
-viewFeeling address feeling =
+viewMoment :  Address Controller.Action -> Moment -> Html
+viewMoment address moment =
   let
     msgLink
-      = FeelingEdit.EditThis feeling
-      |> FeelingList.FeelingEdit
-      |> Controller.FeelingList
+      = MomentEdit.EditThis moment
+      |> MomentList.MomentEdit
+      |> Controller.MomentList
   in
     li [ class "list-group-item list-group-item-" ]
        [ a [ HE.onClick address msgLink ] [ text "e" ]
        , text " "
-       , viewFeelingAt feeling.at
+       , viewMomentAt moment.at
        , text " "
-       , viewFeelingHowOrWhat feeling.how feeling.what
-       , viewFeelingTrigger feeling.trigger
-       , Markdown.toHtml feeling.notes
+       , viewMomentHowOrWhat moment.how moment.what
+       , viewMomentTrigger moment.trigger
+       , Markdown.toHtml moment.notes
        ]
 
 -- TODO: Write a general date formatter elm package.
-viewFeelingAt : Date.Date -> Html
-viewFeelingAt at =
+viewMomentAt : Date.Date -> Html
+viewMomentAt at =
   let
     dateIntToString = toString >> String.pad 2 '0'
   in
@@ -80,16 +80,16 @@ viewFeelingAt at =
     , text <| dateIntToString <| Date.minute at
     ]
 
-viewFeelingHowOrWhat : How -> String -> Html
-viewFeelingHowOrWhat how what =
+viewMomentHowOrWhat : How -> String -> Html
+viewMomentHowOrWhat how what =
   let
     howString    = toLower <| toString how
     content      = if what == "" then howString else what
   in
     B.label (bootstrapContextForHow how) content
 
-viewFeelingTrigger : String -> Html
-viewFeelingTrigger trigger =
+viewMomentTrigger : String -> Html
+viewMomentTrigger trigger =
   if | trigger == "" -> text ""
      | otherwise     -> span [] [ text " ( <- "
                                 , strong [] [ text trigger ]

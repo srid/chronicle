@@ -6,24 +6,24 @@ import Task exposing (Task)
 import Http
 
 import Util.Spas as Spas
-import Chronicle.Data.Feeling exposing (Feeling, decodeFeelingList)
-import Chronicle.Data.Feeling as Feeling
+import Chronicle.Data.Moment exposing (Moment, decodeMomentList)
+import Chronicle.Data.Moment as Moment
 
 -- Using production table
 tableName : String
 tableName =
-  "feelings"
+  "moments"
 
-select : Task Http.Error (List Feeling)
+select : Task Http.Error (List Moment)
 select =
-  Spas.select tableName decodeFeelingList
+  Spas.select tableName decodeMomentList
 
-insert : Feeling -> Task Http.Error String
+insert : Moment -> Task Http.Error String
 insert
-  = Feeling.encodeWithoutAt
+  = Moment.encodeWithoutAt
   >> Spas.singleInsert tableName
 
-update : Feeling -> Int -> Task Http.Error String
-update feeling id =
-  Feeling.encodeWithoutAt feeling
+update : Moment -> Int -> Task Http.Error String
+update moment id =
+  Moment.encodeWithoutAt moment
   |> Spas.update tableName ["id=eq." ++ toString id]
