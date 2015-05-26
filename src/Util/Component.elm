@@ -2,14 +2,18 @@
 
 module Util.Component where
 
-delegateTo : (action -> model -> (model, Maybe request))
-          -> (model -> outterModel)
-          -> (Maybe request -> Maybe outterRequest)
-          -> action
-          -> model
-          -> (outterModel, Maybe outterRequest)
-delegateTo update' convertModel convertRequest a m =
-  let
-    (model', request') = update' a m
-  in
-    (convertModel model', convertRequest request')
+import Maybe
+
+updateInner : (action -> model -> (model, Maybe request))
+            -> (request -> outterRequest)
+            -> (model -> outterModel)
+            -> action
+            -> model
+            -> (outterModel, Maybe outterRequest)
+updateInner update' convertRequest convertModel a =
+  mapTuple convertModel (Maybe.map convertRequest) << update' a
+
+
+mapTuple : (a -> x) -> (b -> y) -> (a, b) -> (x, y)
+mapTuple f g pair =
+  (f <| fst pair, g <| snd pair)

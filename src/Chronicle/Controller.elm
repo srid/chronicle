@@ -6,7 +6,7 @@ import Task exposing (Task, andThen)
 import Task
 import Http
 
-import Util.Component exposing (delegateTo)
+import Util.Component exposing (updateInner)
 import Chronicle.Model exposing (Model)
 import Chronicle.Data.Moment exposing (Moment)
 import Chronicle.Components.Search as Search
@@ -29,10 +29,10 @@ update action model =
     Search a ->
       justModel { model | search <- (Search.update a model.search) }
     MomentList a ->
-      delegateTo
+      updateInner
         MomentList.update
+        MomentListRequest
         (\m -> { model | momentList <- m })
-        (Maybe.map MomentListRequest)
         a
         model.momentList
 -- Request

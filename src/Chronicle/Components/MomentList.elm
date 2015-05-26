@@ -6,7 +6,7 @@ import Task exposing (andThen)
 import Http
 import Date
 
-import Util.Component exposing (delegateTo)
+import Util.Component exposing (updateInner)
 import Chronicle.Database as Database
 import Chronicle.Data.Moment exposing (Moment, decodeMoment)
 import Chronicle.Components.MomentEdit as MomentEdit
@@ -36,10 +36,10 @@ update action model =
     ReloadAll ->
       (model, Just Reload)
     MomentEdit a ->
-      delegateTo
+      updateInner
         MomentEdit.update
+        MomentEditRequest
         (\m -> { model | editing <- m })
-        (Maybe.map MomentEditRequest)
         a
         model.editing
 
