@@ -35,10 +35,29 @@ view address toAction editModel =
   in
     div [ class "form-group" ]
     ((List.map viewFormInput formElements) ++
-     [ button [ class "btn btn-primary"
-              , HE.onClick address msgButton ] [ text buttonLabel ]
-     ]
+     (viewButtons address toAction editModel)
     )
+
+
+viewButtons : Address Controller.Action
+          -> (MomentEdit.Action -> Controller.Action)
+          -> MomentEdit.Model
+          -> List Html
+viewButtons address toAction editModel =
+  case editModel of
+    (MomentEdit.Adding _) ->
+      [ button [ class "btn btn-primary"
+               , HE.onClick address (toAction MomentEdit.Save) ] [ text "Add" ]
+      ]
+    (MomentEdit.Modifying (Just im)) ->
+      let
+        moment = im.formValue
+        label  = "Save " ++ (toString moment.id)
+      in
+        [ button [ class "btn btn-primary"
+                 , HE.onClick address (toAction MomentEdit.Save) ]
+                 [ text label ]
+        ]
 
 
 -- Form abstraction
