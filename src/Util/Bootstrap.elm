@@ -60,9 +60,13 @@ fluidContainer children =
 
 button : Maybe Context -> String -> List Attribute -> Html
 button ctx label attributes =
-  H.button (classFor ctx "btn" :: attributes)
+  H.button (classFor ctx "btn" :: attribute "type" "button" :: attributes)
            [ text label ]
 
+buttonGroup : String -> List Html -> Html
+buttonGroup role buttons =
+  div [ class "btn-group"
+      , attribute "role" role] buttons
 
 -- Utility
 
