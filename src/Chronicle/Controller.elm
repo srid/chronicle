@@ -11,6 +11,7 @@ import Chronicle.Model exposing (Model)
 import Chronicle.Data.Moment exposing (Moment)
 import Chronicle.Components.Search as Search
 import Chronicle.Components.MomentList as MomentList
+import Chronicle.Components.MomentEdit as MomentEdit
 
 -- Action
 
@@ -18,6 +19,7 @@ type Action
   = NoOp
   | Search      Search.Action
   | MomentList MomentList.Action
+  | MomentEdit MomentEdit.Action
 
 -- Update
 
@@ -35,10 +37,19 @@ update action model =
         (\m -> { model | momentList <- m })
         a
         model.momentList
+    MomentEdit a ->
+      updateInner
+        MomentEdit.update
+        MomentEditRequest
+        (\m -> { model | addMoment <- m })
+        a
+        model.addMoment
+
 -- Request
 
 type Request
   = MomentListRequest MomentList.Request
+  | MomentEditRequest MomentEdit.Request
 
 initialRequest : Request
 initialRequest = MomentListRequest MomentList.Reload
@@ -48,6 +59,10 @@ run r =
   case r of
     (MomentListRequest r') ->
       Task.map MomentList <| MomentList.run r'
+    (MomentEditRequest r') ->
+      Task.map MomentList
+      <| MomentEdit.run r' `andThen`
+          (always <| MomentList.run MomentList.Reload)
 
 actions : Mailbox Action
 actions =
