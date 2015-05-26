@@ -12,22 +12,20 @@ import Util.Bootstrap as B
 import Chronicle.Data.Moment exposing (Moment, parseHow, howValues, How(..))
 import Chronicle.Controller as Controller
 import Chronicle.Components.MomentEdit as MomentEdit
-import Chronicle.Components.MomentList as MomentList
 
-toOutterAction : MomentEdit.Action -> Controller.Action
-toOutterAction action =
-  action |> MomentList.MomentEdit |> Controller.MomentList
-
-view : Address Controller.Action -> MomentEdit.Model -> Html
-view address {editType, formValue, error} =
+view : Address Controller.Action
+    -> (MomentEdit.Action -> Controller.Action)
+    -> MomentEdit.Model
+    -> Html
+view address toAction {editType, formValue, error} =
   let
     howOptions   = List.map toString howValues
-    formElements = [ SelectInput address MomentEdit.UpdateHow howOptions "How am I moment?" (toString formValue.how)
-                   , StringInput address MomentEdit.UpdateWhat "What is the moment?" formValue.what
-                   , StringInput address MomentEdit.UpdateTrigger "What triggered it?" formValue.trigger
-                   , MultilineStringInput address MomentEdit.UpdateNotes "Notes" formValue.notes
+    formElements = [ SelectInput address (toAction << MomentEdit.UpdateHow) howOptions "How am I moment?" (toString formValue.how)
+                   , StringInput address (toAction << MomentEdit.UpdateWhat) "What is the moment?" formValue.what
+                   , StringInput address (toAction << MomentEdit.UpdateTrigger) "What triggered it?" formValue.trigger
+                   , MultilineStringInput address (toAction << MomentEdit.UpdateNotes) "Notes" formValue.notes
                    ]
-    msgButton = MomentEdit.Save |> toOutterAction
+    msgButton = toAction MomentEdit.Save
     buttonLabel = case editType of
       MomentEdit.AddNew -> "Add"
       MomentEdit.EditExisting at -> "Save " ++ toString at
@@ -47,9 +45,9 @@ viewFormError error =
 -- Form abstraction
 
 type FormInput
-  = StringInput (Address Controller.Action) (String -> MomentEdit.Action) String String
-  | MultilineStringInput (Address Controller.Action) (String -> MomentEdit.Action) String String
-  | SelectInput (Address Controller.Action) (String -> MomentEdit.Action) (List String) String String
+  = StringInput (Address Controller.Action) (String -> Controller.Action) String String
+  | MultilineStringInput (Address Controller.Action) (String -> Controller.Action) String String
+  | SelectInput (Address Controller.Action) (String -> Controller.Action) (List String) String String
 
 viewFormInput : FormInput -> Html
 viewFormInput fi =
@@ -63,32 +61,28 @@ viewFormInput fi =
 
 input' : (List Attribute -> List Html -> Html)
       -> Address Controller.Action
-      -> (String -> MomentEdit.Action)
+      -> (String -> Controller.Action)
       -> String
       -> String
       -> Html
-input' control address action currentValue placeHolder =
-  let
-    msg = action >> toOutterAction >> message address
-  in
-    control [ class "form-control"
-           , placeholder placeHolder
-           , value currentValue
-           , HE.on "change" HE.targetValue msg] []
+input' control address toAction currentValue placeHolder =
+  control [ class "form-control"
+         , placeholder placeHolder
+         , value currentValue
+         , HE.on "change" HE.targetValue (toAction >> message address)] []
 
 select' : Address Controller.Action
-       -> (String -> MomentEdit.Action)
+       -> (String -> Controller.Action)
        -> List String
        -> String
        -> String
        -> Html
-select' address action options currentValue placeHolder =
+select' address toAction options currentValue placeHolder =
   let
-    msg         = action >> toOutterAction >> message address
     option' val = option [ value val
                          , selected (val == currentValue) ]
                          [ text val ]
   in
     select [ class "form-control"
-           , HE.on "change" HE.targetValue msg ]
+           , HE.on "change" HE.targetValue (toAction >> message address) ]
       <| List.map option' options

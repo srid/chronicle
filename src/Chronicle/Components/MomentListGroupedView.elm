@@ -27,7 +27,8 @@ view : Address Controller.Action -> Model -> Html
 view address {moments, editing} =
   let
     momentGroups = groupMomentsByDay moments
-    editView      = MomentEditView.view address editing
+    toAction      = MomentList.MomentEdit >> Controller.MomentList
+    editView      = MomentEditView.view address toAction editing
     displayView   = div [] <| List.map (viewMomentGroup address) momentGroups
   in
     div [] [ editView
