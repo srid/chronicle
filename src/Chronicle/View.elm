@@ -26,11 +26,10 @@ view address model =
 viewInput : Address Controller.Action -> Model.Model -> Html
 viewInput address model =
   let
-    header  = text "Manage"
+    header  = text "Search & Add"
     content = div []
-                [ h2 [] [ text "Search" ]
-                , SearchView.view      address
-                , h2 [] [ text "Add" ]
+                [ SearchView.view      address
+                , hr [] []
                 , MomentEditView.view  address Controller.MomentEdit model.addMoment
                 ]
   in
