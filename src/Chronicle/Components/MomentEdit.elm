@@ -2,16 +2,14 @@ module Chronicle.Components.MomentEdit where
 
 import Date
 import Task
-import Task exposing (Task, andThen)
+import Task exposing (Task)
 import Debug exposing (log)
-import Result exposing (toMaybe)
 
 import Date
 import Http
 import Focus
 import Focus exposing (Focus, (=>))
 
-import Util.Component exposing (updateInner)
 import Chronicle.Database as Database
 import Chronicle.Data.Moment exposing (Moment, How, parseHow, howValues)
 import Chronicle.Data.Moment as Moment
