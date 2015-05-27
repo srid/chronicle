@@ -5,6 +5,7 @@ import Chronicle.Data.Moment as Moment
 import Chronicle.Components.Search as Search
 import Chronicle.Components.MomentList as MomentList
 import Chronicle.Components.MomentEdit as MomentEdit
+import Chronicle.UI.Editor as Editor
 
 type alias Model =
   { tableName  : String
@@ -18,7 +19,7 @@ initialModel : Model
 initialModel = { tableName   = tableName
                , demoMode    = False -- TODO: expose this to View
                , search      = Search.initialModel
-               , addMoment   = MomentEdit.initialModel
+               , addMoment   = MomentEdit.initialModel Editor.Creating
                , momentList  = MomentList.initialModel
                }
 

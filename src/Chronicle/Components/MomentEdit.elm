@@ -20,10 +20,10 @@ import Chronicle.UI.Editor as Editor
 type alias Model =
   Editor.Model Moment
 
-initialModel : Model
-initialModel =
+initialModel : (Moment -> Editor.Value Moment) -> Model
+initialModel editType =
   let
-    value      = Editor.Creating Moment.default
+    value      = editType Moment.default
     howOptions = List.map toString howValues
     howField   = {name="how",     focus=how',     inputType=Editor.SelectInput "How am I feeling?" howOptions}
     fields     =
@@ -34,7 +34,7 @@ initialModel =
       ]
   in
     Editor.Editor fields (Just value)
-    
+
 -- Foci
 
 setHow' : Moment -> String -> Moment

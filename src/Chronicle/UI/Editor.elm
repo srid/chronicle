@@ -70,13 +70,21 @@ requestFor (Editor _ value) =
     Just (Creating m) -> Create m
     Just (Updating m) -> Update m
 
+-- Add forms are persistent; editing forms are closed after save. By design.
+-- Maybe look into making this behaviour configurable.
+postSaveModel : Model model -> Model model
+postSaveModel editor =
+  case editor of
+    (Editor _ (Just (Updating _))) -> reset editor
+    otherwise         -> editor
+
 update : Action model -> Model model -> (Model model, Maybe (Request model))
 update action m =
   case action of
     Cancel ->
       (reset m, Nothing)
     Save ->
-      (reset m, Just <| requestFor m)
+      (postSaveModel m, Just <| requestFor m)
     EditThis m' ->
       case m of
         (Editor fields _) ->

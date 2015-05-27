@@ -10,6 +10,7 @@ import Util.Component exposing (updateInner)
 import Chronicle.Database as Database
 import Chronicle.Data.Moment exposing (Moment, decodeMoment)
 import Chronicle.Components.MomentEdit as MomentEdit
+import Chronicle.UI.Editor as Editor
 
 type alias Model =
   { moments : List Moment
@@ -45,7 +46,7 @@ update action model =
 
 
 initialModel : Model
-initialModel = { moments=[], editing=MomentEdit.initialModel }
+initialModel = { moments=[], editing=(MomentEdit.initialModel Editor.Updating) }
 
 -- Request
 
