@@ -21,13 +21,14 @@ import Chronicle.Components.MomentEdit as MomentEdit
 import Chronicle.Components.MomentView as MomentView
 import Chronicle.Components.MomentEditView as MomentEditView
 import Chronicle.Components.Search as Search
+import Chronicle.UI.Editor as Editor
 
 
-editFieldAction : MomentEdit.Action -> Controller.Action
+editFieldAction : Editor.Action Moment -> Controller.Action
 editFieldAction = MomentList.MomentEdit >> Controller.MomentList
 
 editTriggerAction : Moment -> Controller.Action
-editTriggerAction = MomentEdit.EditThis >> MomentList.MomentEdit >> Controller.MomentList
+editTriggerAction = Editor.EditThis >> MomentList.MomentEdit >> Controller.MomentList
 
 view : Address Controller.Action -> Model -> Html
 view address {moments, editing} =
@@ -64,9 +65,9 @@ viewMomentGroup address editing (day, moments) =
     B.panel' dayHow header content
 
 editingThis : MomentEdit.Model -> Moment -> Bool
-editingThis editing moment =
-  case editing of
-    (MomentEdit.Modifying (Just {formValue}))
-      -> formValue.id == moment.id
+editingThis (Editor.Editor _ value) moment =
+  case value of
+    (Just (Editor.Updating model)) ->
+      model.id == moment.id
     otherwise
       -> False

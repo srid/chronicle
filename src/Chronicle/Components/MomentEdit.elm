@@ -11,91 +11,69 @@ import Http
 import Focus
 import Focus exposing (Focus, (=>))
 
+import Util.Component exposing (updateInner)
 import Chronicle.Database as Database
-import Chronicle.Data.Moment exposing (Moment, How, parseHow)
+import Chronicle.Data.Moment exposing (Moment, How, parseHow, howValues)
 import Chronicle.Data.Moment as Moment
+import Chronicle.UI.Editor as Editor
 
-type alias InnerModel =
-  { formValue : Moment
-  , error : String  -- Not used
-  }
-
-type Model
-    = Adding InnerModel
-    | Modifying (Maybe InnerModel)
-
-setField : Model -> Focus InnerModel field -> field -> Model
-setField model focus field =
-  let
-    set m = Focus.set focus field m
-  in
-    case model of
-      (Adding im)           -> Adding <| set im
-      (Modifying (Just im)) -> Modifying <| Just <| set im
+type alias Model =
+  Editor.Model Moment
 
 initialModel : Model
-initialModel = Adding { formValue=Moment.default, error="" }
+initialModel =
+  let
+    value      = Editor.Creating Moment.default
+    howOptions = List.map toString howValues
+    howField   = {name="how",     focus=how',     inputType=Editor.SelectInput "How am I feeling?" howOptions}
+    fields     =
+      [ howField
+      , {name="what",    focus=what,    inputType=Editor.StringInput "What is the feeling?"}
+      , {name="trigger", focus=trigger, inputType=Editor.StringInput "What triggered the feeling?"}
+      , {name="notes",   focus=notes,   inputType=Editor.TextInput "What triggered the feeling?"}
+      ]
+  in
+    Editor.Editor fields (Just value)
+    
+-- Foci
 
--- Actions
+setHow' : Moment -> String -> Moment
+setHow' moment string =
+  case parseHow string of
+    Ok h -> { moment | how <- h }
 
-type Action
-  = UpdateHow String
-  | UpdateWhat String
-  | UpdateTrigger String
-  | UpdateNotes String
-  | Save
-  | Cancel
-  | EditThis Moment
+getHow' : Moment -> String
+getHow' =
+  .how >> toString
 
--- Update
-
-update : Action -> Model -> (Model, Maybe Request)
-update action model =
-  case action of
-    Cancel ->
-      case model of
-        (Modifying (Just _)) ->
-          justModel <| Modifying Nothing
-    Save ->
-      case model of
-        (Adding im)     ->
-          (initialModel, Just <| PostgrestInsert im.formValue)
-        (Modifying (Just im))  ->
-          (Modifying Nothing, Just <| PostgrestUpdate im.formValue im.formValue.id)
-    EditThis moment ->
-      justModel <| Modifying <| Just { formValue=moment, error="" }
-    UpdateHow howString ->
-      case parseHow howString |> toMaybe of
-        Just h   -> justModel <| setField model (formValue => how) h
-    UpdateWhat w ->
-      justModel <| setField model (formValue => what) w
-    UpdateTrigger t ->
-      justModel <| setField model (formValue => trigger) t
-    UpdateNotes t ->
-      justModel <| setField model (formValue => notes) t
-
-formValue = Focus.create .formValue (\f r -> { r | formValue <- f r.formValue })
-how       = Focus.create .how       (\f r -> { r | how       <- f r.how })
+how'      = Focus.create getHow'    (\f r -> setHow' r <| f <| getHow' r)
 what      = Focus.create .what      (\f r -> { r | what      <- f r.what })
 trigger   = Focus.create .trigger   (\f r -> { r | trigger   <- f r.trigger })
 notes     = Focus.create .notes     (\f r -> { r | notes     <- f r.notes })
 
-justModel : Model -> (Model, Maybe Request)
-justModel model =
-  (model, Nothing)
+
+-- Actions
+
+type alias Action
+  = Editor.Action Moment
+
+-- Update
+
+update : Action -> Model -> (Model, Maybe Request)
+update =
+  Editor.update
 
 -- Request
 
-type Request
-  = PostgrestInsert Moment
-  | PostgrestUpdate Moment Int
+type alias Request
+  = Editor.Request Moment
 
 -- Tasks
 
 run : Request -> Task Http.Error String
 run r =
   case r of
-    PostgrestInsert moment ->
+    Editor.Create moment ->
       Database.insert moment
-    PostgrestUpdate moment id ->
-      Database.update moment id
+    Editor.Update moment ->
+      Database.update moment moment.id

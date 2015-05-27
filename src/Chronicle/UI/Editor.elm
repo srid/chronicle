@@ -13,7 +13,15 @@ type Value model
 
 -- How to map to UI elements? Esp. String -> Select
 type alias Field model =
-  (String, Focus model String)
+  { name:      String
+  , focus:     Focus model String
+  , inputType: InputType
+  }
+
+type InputType
+  = StringInput String
+  | TextInput String
+  | SelectInput String (List String)
 
 type alias Fields model =
   List (Field model)
@@ -24,6 +32,12 @@ mapModel f (Editor fields value) =
     Just (Creating m) -> Editor fields <| Just <| Creating <| (f m)
     Just (Updating m) -> Editor fields <| Just <| Updating <| (f m)
 
+getModel : Model model -> model
+getModel (Editor fields value) =
+  case value of
+    Just (Creating m) -> m
+    Just (Updating m) -> m
+
 reset : Model model -> Model model
 reset (Editor fields value) =
   Editor fields Nothing
@@ -33,8 +47,12 @@ active (Editor _ value) =
   not <| value == Nothing
 
 setField : Model model -> Field model -> String -> Model model
-setField m (name, focus) value =
+setField m {name, focus} value =
   mapModel (Focus.set focus value) m
+
+getField : Model model -> Field model -> String
+getField m {focus} =
+  Focus.get focus <| getModel m
 
 type Action model
   = UpdateField (Field model) String
