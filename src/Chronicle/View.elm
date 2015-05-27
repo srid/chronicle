@@ -8,7 +8,7 @@ import Chronicle.Model as Model
 import Chronicle.Controller as Controller
 import Chronicle.Components.SearchView as SearchView
 import Chronicle.Components.MomentListGroupedView as MomentListGroupedView
-import Chronicle.Components.MomentEditorView as MomentEditorView
+import Chronicle.UI.EditorView as EditorView
 
 
 view : Address Controller.Action -> Model.Model -> Html
@@ -28,9 +28,9 @@ viewInput address model =
   let
     header  = text "Search & Add"
     content = div []
-                [ SearchView.view      address
+                [ SearchView.view  address
                 , hr [] []
-                , MomentEditorView.view  address Controller.MomentEditor model.addMoment
+                , EditorView.view  address Controller.MomentEditor model.addMoment
                 ]
   in
     B.panel' (Just B.Primary) header content

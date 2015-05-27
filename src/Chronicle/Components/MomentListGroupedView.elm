@@ -19,9 +19,9 @@ import Chronicle.Components.MomentList exposing (Model)
 import Chronicle.Components.MomentList as MomentList
 import Chronicle.Components.MomentEditor as MomentEditor
 import Chronicle.Components.MomentView as MomentView
-import Chronicle.Components.MomentEditorView as MomentEditorView
 import Chronicle.Components.Search as Search
 import Chronicle.UI.Editor as Editor
+import Chronicle.UI.EditorView as EditorView
 
 
 editFieldAction : Editor.Action Moment -> Controller.Action
@@ -56,7 +56,7 @@ viewMomentGroup address editing (day, moments) =
     viewMoment moment =
       case editingThis editing moment of
         -- Display a form to edit this moment
-        True  -> MomentEditorView.view address editFieldAction editing
+        True  -> EditorView.view address editFieldAction editing
         -- Just display the moment
         False -> MomentView.view     address editTriggerAction moment
     content = ul [ class "list-group" ]
