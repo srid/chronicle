@@ -4,14 +4,14 @@ import Chronicle.Database exposing (tableName)
 import Chronicle.Data.Moment as Moment
 import Chronicle.Components.Search as Search
 import Chronicle.Components.MomentList as MomentList
-import Chronicle.Components.MomentEdit as MomentEdit
+import Chronicle.Components.MomentEditor as MomentEditor
 import Chronicle.UI.Editor as Editor
 
 type alias Model =
   { tableName  : String
   , demoMode   : Bool
   , search     : Search.Model
-  , addMoment  : MomentEdit.Model
+  , addMoment  : MomentEditor.Model
   , momentList : MomentList.Model
   }
 
@@ -19,7 +19,7 @@ initialModel : Model
 initialModel = { tableName   = tableName
                , demoMode    = False -- TODO: expose this to View
                , search      = Search.initialModel
-               , addMoment   = MomentEdit.initialModel Editor.Creating
+               , addMoment   = MomentEditor.initialModel Editor.Creating
                , momentList  = MomentList.initialModel
                }
 

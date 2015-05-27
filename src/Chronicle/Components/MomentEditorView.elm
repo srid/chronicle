@@ -1,16 +1,16 @@
-module Chronicle.Components.MomentEditView where
+module Chronicle.Components.MomentEditorView where
 
 import Signal exposing (Address)
 
 import Html exposing (Html)
 
 import Chronicle.Controller as Controller
-import Chronicle.Components.MomentEdit as MomentEdit
+import Chronicle.Components.MomentEditor as MomentEditor
 import Chronicle.UI.EditorView as EditorView
 
 view : Address Controller.Action
-    -> (MomentEdit.Action -> Controller.Action)
-    -> MomentEdit.Model
+    -> (MomentEditor.Action -> Controller.Action)
+    -> MomentEditor.Model
     -> Html
 view address toAction editModel =
   EditorView.view address toAction editModel

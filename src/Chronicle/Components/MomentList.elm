@@ -9,12 +9,12 @@ import Date
 import Util.Component exposing (updateInner)
 import Chronicle.Database as Database
 import Chronicle.Data.Moment exposing (Moment, decodeMoment)
-import Chronicle.Components.MomentEdit as MomentEdit
+import Chronicle.Components.MomentEditor as MomentEditor
 import Chronicle.UI.Editor as Editor
 
 type alias Model =
   { moments : List Moment
-  , editing  : MomentEdit.Model
+  , editing  : MomentEditor.Model
   }
 
 -- Actions
@@ -23,7 +23,7 @@ type Action
   = Initialize (List Moment)
   | Add Moment
   | ReloadAll
-  | MomentEdit MomentEdit.Action
+  | MomentEditor MomentEditor.Action
 
 -- Update
 
@@ -36,23 +36,23 @@ update action model =
       ({ model | moments <- moment :: model.moments }, Nothing)
     ReloadAll ->
       (model, Just Reload)
-    MomentEdit a ->
+    MomentEditor a ->
       updateInner
-        MomentEdit.update
-        MomentEditRequest
+        MomentEditor.update
+        MomentEditorRequest
         (\m -> { model | editing <- m })
         a
         model.editing
 
 
 initialModel : Model
-initialModel = { moments=[], editing=(MomentEdit.initialModel Editor.Updating) }
+initialModel = { moments=[], editing=(MomentEditor.initialModel Editor.Updating) }
 
 -- Request
 
 type Request
   = Reload
-  | MomentEditRequest MomentEdit.Request
+  | MomentEditorRequest MomentEditor.Request
 
 initialRequest : Request
 initialRequest = Reload
@@ -62,6 +62,6 @@ run r =
   case r of
     Reload ->
       Task.map Initialize Database.select
-    (MomentEditRequest r') ->
-      MomentEdit.run r' `andThen`
+    (MomentEditorRequest r') ->
+      MomentEditor.run r' `andThen`
         (always <| run Reload)

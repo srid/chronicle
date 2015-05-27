@@ -1,4 +1,4 @@
-module Chronicle.Components.MomentEdit where
+module Chronicle.Components.MomentEditor where
 
 import Date
 import Task
