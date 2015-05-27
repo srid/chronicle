@@ -23,15 +23,15 @@ view address toAction editModel =
                     (MomentEdit.Adding im)           -> im.formValue
                     (MomentEdit.Modifying (Just im)) -> im.formValue
     howOptions   = List.map toString howValues
-    formElements = [ SelectInput address (toAction << MomentEdit.UpdateHow) howOptions "How am I feeling?" (toString formValue.how)
-                   , StringInput address (toAction << MomentEdit.UpdateWhat) "What is the feeling?" formValue.what
-                   , StringInput address (toAction << MomentEdit.UpdateTrigger) "What triggered it?" formValue.trigger
-                   , MultilineStringInput address (toAction << MomentEdit.UpdateNotes) "Notes" formValue.notes
+    formElements = [ SelectInput address (toAction << MomentEdit.UpdateHow) howOptions
+                      "How am I feeling?" (toString formValue.how)
+                   , StringInput address (toAction << MomentEdit.UpdateWhat)
+                      "What is the feeling?" formValue.what
+                   , StringInput address (toAction << MomentEdit.UpdateTrigger)
+                      "What triggered it?" formValue.trigger
+                   , MultilineStringInput address (toAction << MomentEdit.UpdateNotes)
+                      "Notes" formValue.notes
                    ]
-    msgButton = toAction MomentEdit.Save
-    buttonLabel = case editModel of
-      (MomentEdit.Adding _)    -> "Add"
-      (MomentEdit.Modifying _) -> "Save " ++ toString formValue.id
   in
     div [ class "form-group" ]
     ((List.map viewFormInput formElements) ++
