@@ -13,7 +13,7 @@ import Util.Bootstrap as B
 import Chronicle.Model as Model
 import Chronicle.Data.Moment exposing (Moment, How(..))
 import Chronicle.Controller as Controller
-import Chronicle.Components.MomentEditView as MomentEditView
+import Chronicle.Components.MomentEditorView as MomentEditorView
 
 
 view : Address Controller.Action

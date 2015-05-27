@@ -17,31 +17,32 @@ import Chronicle.Data.MomentGroup exposing (MomentGroup, groupMomentsByDay, howA
 import Chronicle.Controller as Controller
 import Chronicle.Components.MomentList exposing (Model)
 import Chronicle.Components.MomentList as MomentList
-import Chronicle.Components.MomentEdit as MomentEdit
+import Chronicle.Components.MomentEditor as MomentEditor
 import Chronicle.Components.MomentView as MomentView
-import Chronicle.Components.MomentEditView as MomentEditView
+import Chronicle.Components.MomentEditorView as MomentEditorView
 import Chronicle.Components.Search as Search
+import Chronicle.UI.Editor as Editor
 
 
-editFieldAction : MomentEdit.Action -> Controller.Action
-editFieldAction = MomentList.MomentEdit >> Controller.MomentList
+editFieldAction : Editor.Action Moment -> Controller.Action
+editFieldAction = MomentList.MomentEditor >> Controller.MomentList
 
 editTriggerAction : Moment -> Controller.Action
-editTriggerAction = MomentEdit.EditThis >> MomentList.MomentEdit >> Controller.MomentList
+editTriggerAction = Editor.EditThis >> MomentList.MomentEditor >> Controller.MomentList
 
 view : Address Controller.Action -> Model -> Html
 view address {moments, editing} =
   let
     momentGroups = groupMomentsByDay moments
-    toAction      = MomentList.MomentEdit >> Controller.MomentList
-    -- editView      = MomentEditView.view address toAction editing
+    toAction      = MomentList.MomentEditor >> Controller.MomentList
+    -- editView      = MomentEditorView.view address toAction editing
     displayView   = div [] <| List.map (viewMomentGroup address editing) momentGroups
   in
     div [] [ displayView
            ]
 
 
-viewMomentGroup : Address Controller.Action -> MomentEdit.Model -> MomentGroup -> Html
+viewMomentGroup : Address Controller.Action -> MomentEditor.Model -> MomentGroup -> Html
 viewMomentGroup address editing (day, moments) =
   let
     -- FIXME: dayHow and badge must be calculated against unfiltered list
@@ -55,7 +56,7 @@ viewMomentGroup address editing (day, moments) =
     viewMoment moment =
       case editingThis editing moment of
         -- Display a form to edit this moment
-        True  -> MomentEditView.view address editFieldAction editing
+        True  -> MomentEditorView.view address editFieldAction editing
         -- Just display the moment
         False -> MomentView.view     address editTriggerAction moment
     content = ul [ class "list-group" ]
@@ -63,10 +64,10 @@ viewMomentGroup address editing (day, moments) =
   in
     B.panel' dayHow header content
 
-editingThis : MomentEdit.Model -> Moment -> Bool
-editingThis editing moment =
-  case editing of
-    (MomentEdit.Modifying (Just {formValue}))
-      -> formValue.id == moment.id
+editingThis : MomentEditor.Model -> Moment -> Bool
+editingThis (Editor.Editor _ value) moment =
+  case value of
+    (Just (Editor.Updating model)) ->
+      model.id == moment.id
     otherwise
       -> False
