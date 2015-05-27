@@ -4,10 +4,8 @@ module Chronicle.UI.Editor where
 
 import Focus exposing (Focus, (=>))
 
-type alias Model model =
-  { fields   : List (Field model)
-  , value    : Maybe (Value model)
-  }
+type Model model
+  = Editor (Fields model) (Maybe (Value model))
 
 type Value model
   = Creating model
@@ -17,19 +15,22 @@ type Value model
 type alias Field model =
   (String, Focus model String)
 
+type alias Fields model =
+  List (Field model)
+
 mapModel : (model -> model) -> Model model -> Model model
-mapModel f editor =
-  case editor.value of
-    Just (Creating m) -> { editor | value <- Just (Creating (f m)) }
-    Just (Updating m) -> { editor | value <- Just (Creating (f m)) }
+mapModel f (Editor fields value) =
+  case value of
+    Just (Creating m) -> Editor fields <| Just <| Creating <| (f m)
+    Just (Updating m) -> Editor fields <| Just <| Updating <| (f m)
 
 reset : Model model -> Model model
-reset editor =
-  { editor | value <- Nothing }
+reset (Editor fields value) =
+  Editor fields Nothing
 
 active : Model model -> Bool
-active editor =
-  not <| editor.value == Nothing
+active (Editor _ value) =
+  not <| value == Nothing
 
 setField : Model model -> Field model -> String -> Model model
 setField m (name, focus) value =
@@ -46,8 +47,8 @@ type Request model
   | Update model
 
 requestFor : Model model -> Request model
-requestFor editor =
-  case editor.value of
+requestFor (Editor _ value) =
+  case value of
     Just (Creating m) -> Create m
     Just (Updating m) -> Update m
 
@@ -59,6 +60,8 @@ update action m =
     Save ->
       (reset m, Just <| requestFor m)
     EditThis m' ->
-      ({ m | value <- Just (Updating m')}, Nothing)
+      case m of
+        (Editor fields _) ->
+          (Editor fields <| Just <| Updating m', Nothing)
     UpdateField field value ->
       (setField m field value, Nothing)
