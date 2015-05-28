@@ -58,14 +58,15 @@ viewMomentGroup address editing (day, moments) =
         -- Display a form to edit this moment
         True  -> EditorView.view address editFieldAction editing
         -- Just display the moment
-        False -> MomentView.view     address editTriggerAction moment
+        False -> MomentView.view address editTriggerAction moment
     content = ul [ class "list-group" ]
               (List.map viewMoment moments)
   in
     B.panel' dayHow header content
 
+-- XXX: Don't presume the internal structure of editor here.
 editingThis : MomentEditor.Model -> Moment -> Bool
-editingThis (Editor.Editor _ value) moment =
+editingThis (Editor.Editor _ _ value) moment =
   case value of
     (Just (Editor.Updating model)) ->
       model.id == moment.id

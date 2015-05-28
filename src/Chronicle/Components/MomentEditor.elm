@@ -31,7 +31,7 @@ initialModel editType =
       , {name="notes",   focus=notes,   inputType=Editor.TextInput "What triggered the feeling?"}
       ]
   in
-    Editor.Editor fields (Just value)
+    Editor.Editor Moment.default fields (Just value)
 
 -- Foci
 

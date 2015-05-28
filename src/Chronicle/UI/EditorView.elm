@@ -21,7 +21,7 @@ view : Address Controller.Action
     -> Html
 view address toAction editor =
   case editor of
-    (Editor.Editor fields (Just value)) ->
+    (Editor.Editor _ fields (Just value)) ->
       let
         values      = List.map (Editor.getField editor) fields
         fieldsView  = List.map2 (viewField address toAction) fields values
@@ -51,7 +51,7 @@ viewButtons : Address Controller.Action
           -> (Editor.Action model -> Controller.Action)
           -> Editor.Model model
           -> Html
-viewButtons address toAction (Editor.Editor _ (Just value)) =
+viewButtons address toAction (Editor.Editor _ _ (Just value)) =
   case value of
     (Editor.Creating _) ->
       B.button (Just B.Primary)

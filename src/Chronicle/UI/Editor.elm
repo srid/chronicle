@@ -5,11 +5,14 @@ module Chronicle.UI.Editor where
 import Focus exposing (Focus, (=>))
 
 type Model model
-  = Editor (Fields model) (Maybe (Value model))
+  = Editor model (Fields model) (Maybe (Value model))
 
 type Value model
   = Creating model
   | Updating model
+
+type alias Fields model =
+  List (Field model)
 
 -- How to map to UI elements? Esp. String -> Select
 type alias Field model =
@@ -23,27 +26,20 @@ type InputType
   | TextInput String
   | SelectInput String (List String)
 
-type alias Fields model =
-  List (Field model)
-
 mapModel : (model -> model) -> Model model -> Model model
-mapModel f (Editor fields value) =
+mapModel f (Editor empty fields value) =
   case value of
-    Just (Creating m) -> Editor fields <| Just <| Creating <| (f m)
-    Just (Updating m) -> Editor fields <| Just <| Updating <| (f m)
+    Just (Creating m) -> Editor empty fields <| Just <| Creating <| (f m)
+    Just (Updating m) -> Editor empty fields <| Just <| Updating <| (f m)
 
 getModel : Model model -> model
-getModel (Editor fields value) =
+getModel (Editor _ _ value) =
   case value of
     Just (Creating m) -> m
     Just (Updating m) -> m
 
-reset : Model model -> Model model
-reset (Editor fields value) =
-  Editor fields Nothing
-
 active : Model model -> Bool
-active (Editor _ value) =
+active (Editor _ _ value) =
   not <| value == Nothing
 
 setField : Model model -> Field model -> String -> Model model
@@ -54,40 +50,47 @@ getField : Model model -> Field model -> String
 getField m {focus} =
   Focus.get focus <| getModel m
 
+-- Action
+
 type Action model
   = UpdateField (Field model) String
   | Save
   | Cancel
   | EditThis model
 
+-- Request
+
 type Request model
   = Create model
   | Update model
 
 requestFor : Model model -> Request model
-requestFor (Editor _ value) =
+requestFor (Editor _ _ value) =
   case value of
     Just (Creating m) -> Create m
     Just (Updating m) -> Update m
 
--- Add forms are persistent; editing forms are closed after save. By design.
--- Maybe look into making this behaviour configurable.
-postSaveModel : Model model -> Model model
-postSaveModel editor =
+-- Done with this editor. Either prepare for re-use (when in Creating mode) or
+-- close it completely (when in Updating mode). Ideally we should make this
+-- either-or behaviour configurable.
+done : Model model -> Model model
+done editor =
   case editor of
-    (Editor _ (Just (Updating _))) -> reset editor
-    otherwise         -> editor
+    (Editor empty fields (Just (Creating m))) ->
+      Editor empty fields <| Just (Creating empty)
+    (Editor empty fields (Just (Updating m))) ->
+      Editor empty fields Nothing
 
 update : Action model -> Model model -> (Model model, Maybe (Request model))
 update action m =
   case action of
     Cancel ->
-      (reset m, Nothing)
+      (done m, Nothing)
     Save ->
-      (postSaveModel m, Just <| requestFor m)
+      (done m, Just <| requestFor m)
     EditThis m' ->
       case m of
-        (Editor fields _) ->
-          (Editor fields <| Just <| Updating m', Nothing)
+        (Editor empty fields _) ->
+          (Editor empty fields <| Just <| Updating m', Nothing)
     UpdateField field value ->
       (setField m field value, Nothing)
