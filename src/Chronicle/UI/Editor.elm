@@ -2,6 +2,8 @@
 
 module Chronicle.UI.Editor where
 
+import Maybe
+
 import Focus exposing (Focus, (=>))
 
 type Model model
@@ -37,6 +39,10 @@ getModel (Editor _ _ value) =
   case value of
     Just (Creating m) -> m
     Just (Updating m) -> m
+
+mapValue : (Value model -> Value model) -> Model model -> Model model
+mapValue f (Editor empty fields value) =
+  Editor empty fields (Maybe.map f value)
 
 active : Model model -> Bool
 active (Editor _ _ value) =
@@ -77,7 +83,7 @@ done : Model model -> Model model
 done editor =
   case editor of
     (Editor empty fields (Just (Creating m))) ->
-      Editor empty fields <| Just (Creating empty)
+      mapModel (always empty) editor
     (Editor empty fields (Just (Updating m))) ->
       Editor empty fields Nothing
 
@@ -89,8 +95,6 @@ update action m =
     Save ->
       (done m, Just <| requestFor m)
     EditThis m' ->
-      case m of
-        (Editor empty fields _) ->
-          (Editor empty fields <| Just <| Updating m', Nothing)
+      (mapValue (always <| Updating m') m, Nothing)
     UpdateField field value ->
       (setField m field value, Nothing)
