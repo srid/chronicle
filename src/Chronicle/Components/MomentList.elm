@@ -14,14 +14,13 @@ import Chronicle.UI.Editor as Editor
 
 type alias Model =
   { moments : List Moment
-  , editing  : MomentEditor.Model
+  , editor  : MomentEditor.Model
   }
 
 -- Actions
 
 type Action
   = Initialize (List Moment)
-  | Add Moment
   | ReloadAll
   | MomentEditor MomentEditor.Action
 
@@ -32,21 +31,19 @@ update action model =
   case action of
     Initialize moments ->
       ({ initialModel | moments <- moments }, Nothing)
-    Add moment ->
-      ({ model | moments <- moment :: model.moments }, Nothing)
     ReloadAll ->
       (model, Just Reload)
     MomentEditor a ->
       updateInner
         MomentEditor.update
         MomentEditorRequest
-        (\m -> { model | editing <- m })
+        (\m -> { model | editor <- m })
         a
-        model.editing
+        model.editor
 
 
 initialModel : Model
-initialModel = { moments=[], editing=(MomentEditor.initialModel Editor.Updating) }
+initialModel = { moments=[], editor=MomentEditor.initialModel Editor.Updating }
 
 -- Request
 

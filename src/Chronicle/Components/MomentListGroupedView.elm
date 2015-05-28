@@ -31,19 +31,17 @@ editTriggerAction : Moment -> Controller.Action
 editTriggerAction = Editor.EditThis >> MomentList.MomentEditor >> Controller.MomentList
 
 view : Address Controller.Action -> Model -> Html
-view address {moments, editing} =
+view address {moments, editor} =
   let
     momentGroups = groupMomentsByDay moments
-    toAction      = MomentList.MomentEditor >> Controller.MomentList
-    -- editView      = MomentEditorView.view address toAction editing
-    displayView   = div [] <| List.map (viewMomentGroup address editing) momentGroups
+    displayView   = div [] <| List.map (viewMomentGroup address editor) momentGroups
   in
     div [] [ displayView
            ]
 
 
 viewMomentGroup : Address Controller.Action -> MomentEditor.Model -> MomentGroup -> Html
-viewMomentGroup address editing (day, moments) =
+viewMomentGroup address editor (day, moments) =
   let
     -- FIXME: dayHow and badge must be calculated against unfiltered list
     --        of moments on this day.
@@ -54,9 +52,9 @@ viewMomentGroup address editing (day, moments) =
               , span [ class "badge" ] [ text badge ]
               ]
     viewMoment moment =
-      case editingThis editing moment of
+      case editingThis editor moment of
         -- Display a form to edit this moment
-        True  -> EditorView.view address editFieldAction editing
+        True  -> EditorView.view address editFieldAction editor
         -- Just display the moment
         False -> MomentView.view address editTriggerAction moment
     content = ul [ class "list-group" ]
