@@ -28,7 +28,7 @@ initialModel editType =
       [ howField
       , {name="what",    focus=what,    inputType=Editor.StringInput "What is the feeling?"}
       , {name="trigger", focus=trigger, inputType=Editor.StringInput "What triggered the feeling?"}
-      , {name="notes",   focus=notes,   inputType=Editor.TextInput "What triggered the feeling?"}
+      , {name="notes",   focus=notes,   inputType=Editor.TextInput "Additional comments"}
       ]
   in
     Editor.Editor Moment.default fields (Just value)
