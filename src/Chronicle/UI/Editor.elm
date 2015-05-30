@@ -44,6 +44,10 @@ mapValue : (Value model -> Value model) -> Model model -> Model model
 mapValue f (Editor empty fields value) =
   Editor empty fields (Maybe.map f value)
 
+setValue : Value model -> Model model -> Model model
+setValue newValue (Editor empty fields _) =
+  Editor empty fields (Just newValue)
+
 active : Model model -> Bool
 active (Editor _ _ value) =
   not <| value == Nothing
@@ -91,10 +95,17 @@ update : Action model -> Model model -> (Model model, Maybe (Request model))
 update action m =
   case action of
     Cancel ->
-      (done m, Nothing)
+      done m
+        |> withoutReq
     Save ->
       (done m, Just <| requestFor m)
     EditThis m' ->
-      (mapValue (always <| Updating m') m, Nothing)
+      setValue (Updating m') m
+        |> withoutReq
     UpdateField field value ->
-      (setField m field value, Nothing)
+      setField m field value
+        |> withoutReq
+
+withoutReq : Model model -> (Model model, Maybe (Request model))
+withoutReq =
+  flip (,) Nothing

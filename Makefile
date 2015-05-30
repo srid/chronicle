@@ -1,4 +1,4 @@
-ELM_MASTER_BIN=~/elm/Elm-Platform/master/bin/
+# ELM_MASTER_BIN=~/elm/Elm-Platform/master/bin/
 
 all:	compile
 	@true
