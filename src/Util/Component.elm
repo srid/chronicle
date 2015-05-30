@@ -13,6 +13,9 @@ updateInner : (action -> model -> (model, Maybe request))
 updateInner update' convertRequest convertModel a =
   mapTuple convertModel (Maybe.map convertRequest) << update' a
 
+noRequest : a -> (a, Maybe b)
+noRequest =
+  flip (,) Nothing
 
 mapTuple : (a -> x) -> (b -> y) -> (a, b) -> (x, y)
 mapTuple f g pair =

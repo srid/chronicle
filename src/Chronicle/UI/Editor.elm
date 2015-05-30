@@ -6,6 +6,8 @@ import Maybe
 
 import Focus exposing (Focus, (=>))
 
+import Util.Component exposing (noRequest)
+
 type Model model
   = Editor model (Fields model) (Maybe (Value model))
 
@@ -96,16 +98,12 @@ update action m =
   case action of
     Cancel ->
       done m
-        |> withoutReq
+        |> noRequest
     Save ->
       (done m, Just <| requestFor m)
     EditThis m' ->
       setValue (Updating m') m
-        |> withoutReq
+        |> noRequest
     UpdateField field value ->
       setField m field value
-        |> withoutReq
-
-withoutReq : Model model -> (Model model, Maybe (Request model))
-withoutReq =
-  flip (,) Nothing
+        |> noRequest

@@ -6,7 +6,7 @@ import Task exposing (Task, andThen)
 import Task
 import Http
 
-import Util.Component exposing (updateInner)
+import Util.Component exposing (updateInner, noRequest)
 import Chronicle.Model exposing (Model)
 import Chronicle.Data.Moment exposing (Moment)
 import Chronicle.Components.Search as Search
@@ -27,9 +27,11 @@ update : Action -> Model -> (Model, Maybe Request)
 update action model =
   case action of
     NoOp ->
-      justModel model
+      model
+        |> noRequest
     Search a ->
-      justModel { model | search <- (Search.update a model.search) }
+      { model | search <- (Search.update a model.search) }
+        |> noRequest
     MomentList a ->
       updateInner
         MomentList.update
@@ -67,8 +69,3 @@ run r =
 actions : Mailbox Action
 actions =
   mailbox NoOp
-
--- Component utility
-justModel : Model -> (Model, Maybe Request)
-justModel model =
-  (model, Nothing)
