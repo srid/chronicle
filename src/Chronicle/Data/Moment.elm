@@ -57,7 +57,7 @@ momentToString moment =
 transformNotes : Moment -> String
 transformNotes {notes} =
   let
-    re = Regex.regex "#[\\w\\/]+"
+    re = Regex.regex "#[\\w\\/\\.]+"
     transformTag {match} = "`" ++ match ++ "`"
     f  = Regex.replace Regex.All re transformTag
   in
