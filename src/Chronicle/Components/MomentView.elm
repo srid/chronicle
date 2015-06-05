@@ -45,7 +45,7 @@ viewMomentAt at =
   let
     dateIntToString = toString >> String.pad 2 '0'
   in
-    code [ (title (Date.dayOfWeek at |> toString)) ]
+    span [ class "datetime" ]
     [ text <| dateIntToString <| Date.hour at
     , text ":"
     , text <| dateIntToString <| Date.minute at

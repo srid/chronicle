@@ -2,3 +2,7 @@
 .panel-heading {
   font-weight: bold;
 }
+
+.datetime {
+    color: gray;
+}
