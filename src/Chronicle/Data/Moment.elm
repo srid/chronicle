@@ -3,6 +3,7 @@ module Chronicle.Data.Moment where
 import Date
 import String
 import Set
+import Regex
 import Json.Decode  as J
 import Json.Decode exposing ((:=))
 import Json.Encode as JE
@@ -50,6 +51,19 @@ momentToString moment =
     , (\_ -> if moment.trigger == "" then "" else "<-") -- To list all entries with trigger set
     , .trigger
     , .notes ]
+
+-- Notes formatting
+
+transformNotes : Moment -> String
+transformNotes {notes} =
+  let
+    re = Regex.regex "#[\\w\\/]+"
+    transformTag {match} = "`" ++ match ++ "`"
+    f  = Regex.replace Regex.All re transformTag
+  in
+    f notes
+
+-- Mangle
 
 mangleWhitelist : Set.Set String
 mangleWhitelist =

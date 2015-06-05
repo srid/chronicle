@@ -11,7 +11,7 @@ import Html.Events as HE
 
 import Util.Bootstrap as B
 import Chronicle.Model as Model
-import Chronicle.Data.Moment exposing (Moment, How(..))
+import Chronicle.Data.Moment exposing (Moment, How(..), transformNotes)
 import Chronicle.Controller as Controller
 
 
@@ -27,7 +27,7 @@ view address toAction moment =
      , text " "
      , viewMomentHowOrWhat moment.how moment.what
      , viewMomentTrigger moment.trigger
-     , Markdown.toHtml moment.notes
+     , moment |> transformNotes |> Markdown.toHtml
      ]
 
 viewEditButton : Address Controller.Action
