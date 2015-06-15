@@ -1,0 +1,9 @@
+{
+    "name": "Chronicle",
+    "repository": "https://github.com/srid/chronicle",
+    "env": {
+        "BUILDPACK_URL": "https://github.com/srid/heroku-buildpack-elm.git",
+        "ELM_COMPILE": "make compile",
+        "ELM_STATIC_DIR": "build/static"
+    }
+}
