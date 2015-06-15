@@ -1,0 +1,6 @@
+
+deployment:
+  production:
+    branch: circleci_heroku_deployment
+    heroku:
+      appname: chronikle
