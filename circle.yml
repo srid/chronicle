@@ -6,6 +6,6 @@ test:
 # Deploy to Heroku
 deployment:
   production:
-    branch: circleci_heroku_deployment
+    branch: master
     heroku:
       appname: chronikle
