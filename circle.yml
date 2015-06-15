@@ -1,4 +1,9 @@
+# No tests
+test:
+  override:
+    - echo
 
+# Deploy to Heroku
 deployment:
   production:
     branch: circleci_heroku_deployment
