@@ -1,5 +1,7 @@
 # chronicle
 
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/srid/chronicle/tree/heroku_button)
+
 Chronicle allows you to form reliable memories. It keeps track of a **tree of memories** that are, ultimately, linked to the factual records recorded at the very moment they happened.
 
 <!-- TOC generated using https://github.com/jonschlinkert/markdown-toc
@@ -17,6 +19,7 @@ And then remove the trailing `-` in links
   * [HACKING](#hacking)
     + [Database notes](#database-notes)
     + [Elm package ideas](#elm-package-ideas)
+  * [Deploying to Heroku](#deploying-to-heroku)
 
 ## Why do this?
 
@@ -129,3 +132,10 @@ Some new packages I can create by extracing code from this repo:
 * Time ago (eg.: `23 secs ago`)
 * Search query parser (see `src/Search.elm`)
 * Bootstrap.elm (maybe [use this](https://github.com/circuithub/elm-bootstrap-html)?)
+
+## Deploying to Heroku
+
+1. Deploy the app using the Heroku button at the top of this README.
+2. Create the database schema using `heroku pg:psql --app $APPNAME < schema.sql`
+3. Note down the basic auth credentials by inspecting the app environment (eg: `heroku config | grep SPAS`)
+4. Access the app at the URL: https://${APPNAME}.herokuapp.com/index.html (note the "index.html" suffix that is required).
