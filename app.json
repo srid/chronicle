@@ -4,9 +4,9 @@
     "env": {
         "BUILDPACK_URL": "https://github.com/srid/heroku-buildpack-elm.git",
         "ELM_COMPILE": "make compile",
-        "ELM_STATIC_DIR": "build/static"
+        "ELM_STATIC_DIR": "build/static",
         "SPAS_V1SCHEMA": {
-            "description": "PostgreSQL schema to serve via spas API"
+            "description": "PostgreSQL schema to serve via spas API",
             "value": "1",
             "required": true
         },
