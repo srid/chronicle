@@ -1,5 +1,7 @@
 # chronicle
 
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/srid/chronicle/tree/heroku_button)
+
 Chronicle allows you to form reliable memories. It keeps track of a **tree of memories** that are, ultimately, linked to the factual records recorded at the very moment they happened.
 
 <!-- TOC generated using https://github.com/jonschlinkert/markdown-toc
