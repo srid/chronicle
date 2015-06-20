@@ -19,6 +19,7 @@ And then remove the trailing `-` in links
   * [HACKING](#hacking)
     + [Database notes](#database-notes)
     + [Elm package ideas](#elm-package-ideas)
+  * [Deploying to Heroku](#deploying-to-heroku)
 
 ## Why do this?
 
@@ -131,3 +132,13 @@ Some new packages I can create by extracing code from this repo:
 * Time ago (eg.: `23 secs ago`)
 * Search query parser (see `src/Search.elm`)
 * Bootstrap.elm (maybe [use this](https://github.com/circuithub/elm-bootstrap-html)?)
+
+## Deploying to Heroku
+
+Deploy the app using the Heroku button at the top of this README. And then create the database schema using:
+
+```
+heroku pg:psql --app $APPNAME < schema.sql
+```
+
+The app will be accessible at this URL: https://${APPNAME}.herokuapp.com/index.html (note the "index.html" suffix that is required).
