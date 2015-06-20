@@ -135,10 +135,7 @@ Some new packages I can create by extracing code from this repo:
 
 ## Deploying to Heroku
 
-Deploy the app using the Heroku button at the top of this README. And then create the database schema using:
-
-```
-heroku pg:psql --app $APPNAME < schema.sql
-```
-
-The app will be accessible at this URL: https://${APPNAME}.herokuapp.com/index.html (note the "index.html" suffix that is required).
+1. Deploy the app using the Heroku button at the top of this README.
+2. Create the database schema using `heroku pg:psql --app $APPNAME < schema.sql`
+3. Note down the basic auth credentials by inspecting the app environment (eg: `heroku config | grep SPAS`)
+4. Access the app at the URL: https://${APPNAME}.herokuapp.com/index.html (note the "index.html" suffix that is required).
