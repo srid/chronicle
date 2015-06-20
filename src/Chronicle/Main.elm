@@ -38,8 +38,9 @@ request =
 
 runAndSend : Signal.Mailbox Controller.Action -> Controller.Request -> Task Http.Error ()
 runAndSend mailbox r =
-  withErrorLogging <| Controller.run (log "[REQUEST]" r)
-      `andThen` (\action -> Signal.send mailbox.address <| logAction "[FORWARD ACTION]" action)
+  withErrorLogging
+  <| Controller.run (log "[REQUEST]" r)
+       `andThen` (logAction "[FORWARD ACTION]" >> Signal.send mailbox.address)
 
 withErrorLogging : Task x a -> Task x a
 withErrorLogging task =
