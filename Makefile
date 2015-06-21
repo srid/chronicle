@@ -1,10 +1,8 @@
-# ELM_MASTER_BIN=~/elm/Elm-Platform/master/bin/
-
 all:	compile
 	@true
 
 compile:
-	PATH=${ELM_MASTER_BIN}:${PATH} elm make src/Chronicle/Main.elm --output=build/static/elm.js
+	elm make src/Chronicle/Main.elm --output=build/static/elm.js
 	cp index.html build/static/index.html
 	cp style.css build/static/style.css
 
