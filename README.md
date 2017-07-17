@@ -4,7 +4,7 @@
 
 Chronicle allows you to form reliable memories. It keeps track of a **tree of memories** that are, ultimately, linked to the factual records recorded at the very moment they happened.
 
-**STATUS OF PROJECT**: The project has been put on hold since mid-June 2015, but I plan to revisit it soon. You can enter entries, but there is no ['fold' functionality](#folds) yet. If you are interested in assisting with development and/or brainstorming, email me (srid@srid.ca).
+**STATUS OF PROJECT**: The project has been put on hold since June 2015 however it [could be revived](https://github.com/srid/chronicle/issues/38). You could add entries, but there is no ['fold' feature](#folds) yet. If you are interested in the project, file a Github issue!
 
 <!-- TOC generated using https://github.com/jonschlinkert/markdown-toc
 And then remove the trailing `-` in links
